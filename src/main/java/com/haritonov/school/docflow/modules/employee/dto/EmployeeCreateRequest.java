@@ -5,8 +5,7 @@ import lombok.Data;
 import java.time.LocalDate;
 
 @Data
-public class EmployeeUpdate {
-    private Long id;
+public class EmployeeCreateRequest {
     private String firstName;
     private String lastName;
     private String patronymic;
