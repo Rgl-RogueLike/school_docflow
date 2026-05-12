@@ -25,6 +25,9 @@ public class Employee {
     @Column(name = "patronymic")
     private String patronymic;
 
+    @Column(name = "phone_number")
+    private String phoneNumber;
+
     @ManyToOne
     private Position position;
 }
