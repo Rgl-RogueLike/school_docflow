@@ -36,7 +36,7 @@ public class PositionServiceImpl implements PositionService{
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public List<PositionResponse> getAll() {
         List<Position> positions = positionRepository.findAll();
         return positions.stream()
@@ -45,7 +45,7 @@ public class PositionServiceImpl implements PositionService{
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public PositionResponse getById(Long id) {
         Position position = positionRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Должность не найдена"));
