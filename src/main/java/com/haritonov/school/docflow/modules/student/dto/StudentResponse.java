@@ -13,7 +13,9 @@ public class StudentResponse {
     private String patronymic;
     private Gender gender;
     private LocalDate dateOfBirth;
+    private LocalDate dateOfEnrollment;
     private String className;
+    private Long classId;
 
     public String getFullName() {
         return lastName + " " + firstName + (patronymic != null ? " " + patronymic : " ");

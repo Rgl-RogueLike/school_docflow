@@ -28,6 +28,8 @@ public class EmployeeServiceImpl implements EmployeeService {
         response.setFirstName(entity.getFirstName());
         response.setLastName(entity.getLastName());
         response.setPatronymic(entity.getPatronymic());
+        response.setPhoneNumber(entity.getPhoneNumber());
+        response.setDateOfEmployment(entity.getDateOfEmployment());
         if(entity.getPosition() != null) {
             response.setPositionName(entity.getPosition().getName());
         }
@@ -47,6 +49,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         employee.setLastName(request.getLastName());
         employee.setPatronymic(request.getPatronymic());
         employee.setPhoneNumber(request.getPhoneNumber());
+        employee.setDateOfEmployment(request.getDateOfEmployment());
         employee.setPosition(position);
         Employee savedEmployee = employeeRepository.save(employee);
         return savedEmployee.getId();
@@ -83,6 +86,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         employee.setLastName(request.getLastName());
         employee.setPatronymic(request.getPatronymic());
         employee.setPhoneNumber(request.getPhoneNumber());
+        employee.setDateOfEmployment(request.getDateOfEmployment());
         employee.setPosition(position);
         employeeRepository.save(employee);
 

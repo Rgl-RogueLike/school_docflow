@@ -17,4 +17,6 @@ public interface StudentService {
     void update(StudentUpdateRequest request);
 
     void delete(Long id);
+
+    List<StudentResponse> getByClassId(Long classId);
 }
