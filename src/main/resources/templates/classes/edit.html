@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html th:replace="~{layout :: layout}" lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Редактирование класса</title>
+</head>
+<body>
+
+<div th:fragment="content">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Редактирование класса</h4>
+                </div>
+                <div class="card-body">
+                    <form action="#" th:action="@{/classes/{id}/edit(id=${classDto.id})}"
+                          th:object="${classDto}" method="post">
+
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Название класса *</label>
+                            <input type="text" class="form-control" id="name"
+                                   th:field="*{name}" required
+                                   placeholder="10А">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="year" class="form-label">Год набора *</label>
+                            <input type="number" class="form-control" id="year"
+                                   th:field="*{year}" required
+                                   placeholder="2023"
+                                   min="2000" max="2100">
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="/classes" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left"></i> Отмена
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-save"></i> Сохранить изменения
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
