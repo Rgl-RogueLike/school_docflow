@@ -2,7 +2,7 @@ package com.haritonov.school.docflow.modules.student.controller;
 
 import com.haritonov.school.docflow.modules.student.dto.StudentResponse;
 import com.haritonov.school.docflow.modules.student.dto.StudentUpdateRequest;
-import com.haritonov.school.docflow.modules.student.service.EducationalClassSerivce;
+import com.haritonov.school.docflow.modules.student.service.EducationalClassService;
 import com.haritonov.school.docflow.modules.student.service.StudentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -18,7 +18,7 @@ import java.util.List;
 public class StudentController {
 
     private final StudentService studentService;
-    private final EducationalClassSerivce classService;
+    private final EducationalClassService classService;
 
     @GetMapping
     public String listStudents(Model model, @RequestParam(required = false) Long classId) {
@@ -39,7 +39,7 @@ public class StudentController {
 
     @GetMapping("/{id}")
     public String viewStudent(@PathVariable Long id, Model model) {
-        StudentResponse student = studentService.getById(id); // Вам нужно добавить этот метод в StudentService
+        StudentResponse student = studentService.getById(id);
         model.addAttribute("student", student);
         model.addAttribute("title", "Карточка ученика");
         model.addAttribute("username", "Секретарь");
