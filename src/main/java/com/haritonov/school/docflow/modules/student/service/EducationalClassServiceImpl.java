@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class EducationalClassServiceImpl implements EducationalClassSerivce {
+public class EducationalClassServiceImpl implements EducationalClassService {
 
     private final EducationalClassRepository educationalClassRepository;
 
@@ -30,8 +30,8 @@ public class EducationalClassServiceImpl implements EducationalClassSerivce {
     @Transactional
     public Long create(EducationalClassCreateRequest request) {
         EducationalClass educationalClass = new EducationalClass();
-        educationalClass.setName(educationalClass.getName());
-        educationalClass.setYear(educationalClass.getYear());
+        educationalClass.setName(request.getName());
+        educationalClass.setYear(request.getYear());
         EducationalClass savedClass = educationalClassRepository.save(educationalClass);
         return savedClass.getId();
     }

@@ -6,7 +6,7 @@ import com.haritonov.school.docflow.modules.student.dto.EducationalClassUpdateRe
 
 import java.util.List;
 
-public interface EducationalClassSerivce {
+public interface EducationalClassService {
 
     Long create(EducationalClassCreateRequest request);
 
