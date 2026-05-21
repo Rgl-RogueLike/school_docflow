@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -24,6 +26,12 @@ public class Employee {
 
     @Column(name = "patronymic")
     private String patronymic;
+
+    @Column(name = "phone_number")
+    private String phoneNumber;
+
+    @Column(name = "date_of_employment")
+    private LocalDate dateOfEmployment;
 
     @ManyToOne
     private Position position;
