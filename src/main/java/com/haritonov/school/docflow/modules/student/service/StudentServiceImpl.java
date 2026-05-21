@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -79,12 +80,13 @@ public class StudentServiceImpl implements StudentService{
             educationalClass = educationalClassRepository.findById(request.getClassId())
                     .orElseThrow(() -> new IllegalArgumentException("Класс не найден"));
         }
+        LocalDate existingDateOfEnrollment = student.getDateOfEnrollment();
         student.setFirstName(request.getFirstName());
         student.setLastName(request.getLastName());
         student.setPatronymic(request.getPatronymic());
         student.setGender(request.getGender());
         student.setDateOfBirth(request.getDateOfBirth());
-        student.setDateOfEnrollment(request.getDateOfEnrollment());
+        student.setDateOfEnrollment(existingDateOfEnrollment);
         student.setEducationalClass(educationalClass);
         studentRepository.save(student);
     }
@@ -96,5 +98,14 @@ public class StudentServiceImpl implements StudentService{
             throw new IllegalArgumentException("Ученик не найден");
         }
         studentRepository.deleteById(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<StudentResponse> getByClassId(Long classId) {
+        List<Student> students = studentRepository.findByEducationalClass_Id(classId);
+        return students.stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
     }
 }
