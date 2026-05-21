@@ -62,6 +62,7 @@ public class PositionServiceImpl implements PositionService{
     }
 
     @Override
+    @Transactional
     public void delete(Long id) {
         if (!positionRepository.existsById(id)) {
             throw new IllegalArgumentException("Должность не найдена");
