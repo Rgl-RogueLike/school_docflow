@@ -42,21 +42,6 @@ public class MainController {
         return "certificates/list";
     }
 
-    @GetMapping("/students")
-    public String students() {
-        return "students/list";
-    }
-
-    @GetMapping("/employees")
-    public String employees() {
-        return "employees/list";
-    }
-
-    @GetMapping("/classes")
-    public String classes() {
-        return "classes/list";
-    }
-
     @GetMapping("/reports")
     public String reports() {
         return "reports/list";
