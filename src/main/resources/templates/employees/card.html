@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html th:replace="~{layout :: layout}" lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Карточка сотрудника</title>
+</head>
+<body>
+
+<div th:fragment="content">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Карточка сотрудника</h2>
+        <div>
+            <a href="javascript:history.back()" class="btn btn-outline-secondary me-2">← Назад</a>
+            <a href="/employees" class="btn btn-outline-primary">К списку</a>
+        </div>
+    </div>
+
+    <div class="card shadow">
+        <div class="card-header bg-light">
+            <h5 class="mb-0">Личная информация</h5>
+        </div>
+        <div class="card-body">
+            <table class="table table-borderless">
+                <tbody>
+                <tr>
+                    <th style="width: 30%;" class="text-muted">Фамилия:</th>
+                    <td th:text="${employee.lastName}">Иванов</td>
+                </tr>
+                <tr>
+                    <th class="text-muted">Имя:</th>
+                    <td th:text="${employee.firstName}">Иван</td>
+                </tr>
+                <tr th:if="${employee.patronymic != null}">
+                    <th class="text-muted">Отчество:</th>
+                    <td th:text="${employee.patronymic}">Иванович</td>
+                </tr>
+                <tr>
+                    <th class="text-muted">Телефон:</th>
+                    <td th:text="${employee.phoneNumber}">+7(123)456-78-90</td>
+                </tr>
+                <tr>
+                    <th class="text-muted">Дата приёма на работу:</th>
+                    <td th:text="${#temporals.format(employee.dateOfEmployment, 'dd.MM.yyyy')}">01.09.2024</td>
+                </tr>
+                <tr>
+                    <th class="text-muted">Должность:</th>
+                    <td th:text="${employee.positionName}">Учитель</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card shadow mt-4">
+        <div class="card-header bg-light">
+            <h5 class="mb-0">Действия</h5>
+        </div>
+        <div class="card-body">
+            <div class="d-flex gap-2">
+                <a th:href="@{/employees/{id}/edit(id=${employee.id})}" class="btn btn-primary">
+                    <i class="bi bi-pencil"></i> Редактировать
+                </a>
+                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                    <i class="bi bi-trash"></i> Удалить
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="deleteModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Подтверждение удаления</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Удалить сотрудника <strong th:text="${employee.fullName}"></strong>?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <form th:action="@{/employees/{id}/delete(id=${employee.id})}" method="post">
+                        <button type="submit" class="btn btn-danger">Удалить</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
