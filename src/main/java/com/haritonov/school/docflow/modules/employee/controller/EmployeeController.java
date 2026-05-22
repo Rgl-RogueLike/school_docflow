@@ -5,6 +5,7 @@ import com.haritonov.school.docflow.modules.employee.dto.EmployeeResponse;
 import com.haritonov.school.docflow.modules.employee.dto.EmployeeUpdateRequest;
 import com.haritonov.school.docflow.modules.employee.service.EmployeeService;
 import com.haritonov.school.docflow.modules.employee.service.PositionService;
+import com.haritonov.school.docflow.modules.user.service.CurrentUserService;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Controller;
@@ -19,18 +20,19 @@ public class EmployeeController {
 
     private final EmployeeService employeeService;
     private final PositionService positionService;
+    private final CurrentUserService currentUserService;
 
     @GetMapping
     public String listEmployees(Model model) {
         model.addAttribute("employees", employeeService.getAll());
-        model.addAttribute("username", "Секретарь");
+        model.addAttribute("username", currentUserService.getCurrentEmployeeFullName());
         return "employees/list";
     }
 
     @GetMapping("/{id}")
     public String viewEmployee(@PathVariable Long id, Model model) {
         model.addAttribute("employee", employeeService.getById(id));
-        model.addAttribute("username", "Секретарь");
+        model.addAttribute("username", currentUserService.getCurrentEmployeeFullName());
         return "employees/card";
     }
 
@@ -38,7 +40,7 @@ public class EmployeeController {
     public String showCreateForm(Model model) {
         model.addAttribute("employeeDto", new EmployeeCreateRequest());
         model.addAttribute("positions", positionService.getAll());
-        model.addAttribute("username", "Секретарь");
+        model.addAttribute("username", currentUserService.getCurrentEmployeeFullName());
         return "employees/new";
     }
 
@@ -61,7 +63,7 @@ public class EmployeeController {
             EmployeeUpdateRequest updateRequest = getEmployeeUpdateRequest(employee);
             model.addAttribute("employeeDto", updateRequest);
             model.addAttribute("positions", positionService.getAll());
-            model.addAttribute("username", "Секретарь");
+            model.addAttribute("username", currentUserService.getCurrentEmployeeFullName());
             return "employees/edit";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Сотрудник не найден");

@@ -4,6 +4,7 @@ import com.haritonov.school.docflow.modules.student.dto.EducationalClassCreateRe
 import com.haritonov.school.docflow.modules.student.dto.EducationalClassResponse;
 import com.haritonov.school.docflow.modules.student.dto.EducationalClassUpdateRequest;
 import com.haritonov.school.docflow.modules.student.service.EducationalClassService;
+import com.haritonov.school.docflow.modules.user.service.CurrentUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,19 +19,20 @@ import java.util.List;
 public class EducationalClassController {
 
     private final EducationalClassService classService;
+    private final CurrentUserService currentUserService;
 
     @GetMapping
     public String listClasses(Model model) {
         List<EducationalClassResponse> classes = classService.getAll();
         model.addAttribute("classes", classes);
-        model.addAttribute("username", "Секретарь");
+        model.addAttribute("username", currentUserService.getCurrentEmployeeFullName());
         return "classes/list";
     }
 
     @GetMapping("/new")
     public String showCreateForm(Model model) {
         model.addAttribute("classDto", new EducationalClassCreateRequest());
-        model.addAttribute("username", "Секретарь");
+        model.addAttribute("username", currentUserService.getCurrentEmployeeFullName());
         return "classes/new";
     }
 
@@ -50,7 +52,7 @@ public class EducationalClassController {
             updateRequest.setYear(classResponse.getYear());
 
             model.addAttribute("classDto", updateRequest);
-            model.addAttribute("username", "Секретарь");
+            model.addAttribute("username", currentUserService.getCurrentEmployeeFullName());
             return "classes/edit";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Класс не найден");

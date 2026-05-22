@@ -4,6 +4,7 @@ import com.haritonov.school.docflow.modules.employee.dto.PositionCreateRequest;
 import com.haritonov.school.docflow.modules.employee.dto.PositionResponse;
 import com.haritonov.school.docflow.modules.employee.dto.PositionUpdateRequest;
 import com.haritonov.school.docflow.modules.employee.service.PositionService;
+import com.haritonov.school.docflow.modules.user.service.CurrentUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,18 +17,19 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class PositionController {
 
     private final PositionService positionService;
+    private final CurrentUserService currentUserService;
 
     @GetMapping
     public String listPositions(Model model) {
         model.addAttribute("positions", positionService.getAll());
-        model.addAttribute("username", "Секретарь");
+        model.addAttribute("username", currentUserService.getCurrentEmployeeFullName());
         return "positions/list";
     }
 
     @GetMapping("/new")
     public String showCreatorForm(Model model) {
         model.addAttribute("positionDto", new PositionCreateRequest());
-        model.addAttribute("username", "Секретарь");
+        model.addAttribute("username", currentUserService.getCurrentEmployeeFullName());
         return "positions/new";
     }
 
@@ -51,7 +53,7 @@ public class PositionController {
             updateRequest.setId(position.getId());
             updateRequest.setName(position.getName());
             model.addAttribute("positionDto", updateRequest);
-            model.addAttribute("username", "Секретарь");
+            model.addAttribute("username", currentUserService.getCurrentEmployeeFullName());
             return "positions/edit";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Должность не найдена");

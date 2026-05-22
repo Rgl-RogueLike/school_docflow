@@ -1,5 +1,7 @@
 package com.haritonov.school.docflow.controller;
 
+import com.haritonov.school.docflow.modules.user.service.CurrentUserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -7,11 +9,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
+@RequiredArgsConstructor
 public class MainController {
+
+    private final CurrentUserService currentUserService;
 
     @GetMapping("/")
     public String index(Model model) {
-        model.addAttribute("username", "Секретарь");
+        model.addAttribute("username", currentUserService.getCurrentEmployeeFullName());
         return "index";
     }
 
@@ -35,11 +40,6 @@ public class MainController {
     @GetMapping("/orders")
     public String orders() {
         return "orders/list";
-    }
-
-    @GetMapping("/certificates")
-    public String certificates() {
-        return "certificates/list";
     }
 
     @GetMapping("/reports")

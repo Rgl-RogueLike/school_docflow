@@ -4,6 +4,7 @@ import com.haritonov.school.docflow.modules.student.dto.StudentResponse;
 import com.haritonov.school.docflow.modules.student.dto.StudentUpdateRequest;
 import com.haritonov.school.docflow.modules.student.service.EducationalClassService;
 import com.haritonov.school.docflow.modules.student.service.StudentService;
+import com.haritonov.school.docflow.modules.user.service.CurrentUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,6 +20,7 @@ public class StudentController {
 
     private final StudentService studentService;
     private final EducationalClassService classService;
+    private final CurrentUserService currentUserService;
 
     @GetMapping
     public String listStudents(Model model, @RequestParam(required = false) Long classId) {
@@ -33,7 +35,7 @@ public class StudentController {
             model.addAttribute("students", null);
             model.addAttribute("title", "Выберите учебный класс");
         }
-        model.addAttribute("username", "Секретарь");
+        model.addAttribute("username", currentUserService.getCurrentEmployeeFullName());
         return "students/list";
     }
 
@@ -42,7 +44,7 @@ public class StudentController {
         StudentResponse student = studentService.getById(id);
         model.addAttribute("student", student);
         model.addAttribute("title", "Карточка ученика");
-        model.addAttribute("username", "Секретарь");
+        model.addAttribute("username", currentUserService.getCurrentEmployeeFullName());
         return "students/card";
     }
 
@@ -52,7 +54,7 @@ public class StudentController {
         model.addAttribute("student", student);
         model.addAttribute("classes", classService.getAll());
         model.addAttribute("title", "Редактирование ученика");
-        model.addAttribute("username", "Секретарь");
+        model.addAttribute("username", currentUserService.getCurrentEmployeeFullName());
         return "students/edit";
     }
 
