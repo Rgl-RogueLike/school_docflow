@@ -1,6 +1,7 @@
 package com.haritonov.school.docflow.modules.dislocation.controller;
 
 import com.haritonov.school.docflow.modules.dislocation.dto.DislocationCreateRequest;
+import com.haritonov.school.docflow.modules.dislocation.dto.DislocationFilterDto;
 import com.haritonov.school.docflow.modules.dislocation.dto.DislocationResponse;
 import com.haritonov.school.docflow.modules.dislocation.dto.DislocationUpdateRequest;
 import com.haritonov.school.docflow.modules.dislocation.service.DislocationService;
@@ -28,8 +29,9 @@ public class DislocationController {
     private final DocumentNumberGeneratedService documentNumberGeneratedService;
 
     @GetMapping
-    public String listDislocations(Model model) {
-        model.addAttribute("dislocations", dislocationService.getAll());
+    public String listDislocations(@ModelAttribute DislocationFilterDto filter, Model model) {
+        model.addAttribute("dislocations", dislocationService.getAllWithFilter(filter));
+        model.addAttribute("filter", filter);
         model.addAttribute("username", currentUserService.getCurrentEmployeeFullName());
         return "dislocations/list";
     }

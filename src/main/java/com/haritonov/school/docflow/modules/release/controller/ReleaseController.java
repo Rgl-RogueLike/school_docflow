@@ -3,6 +3,7 @@ package com.haritonov.school.docflow.modules.release.controller;
 import com.haritonov.school.docflow.modules.document.model.enums.DocumentPrefix;
 import com.haritonov.school.docflow.modules.document.service.DocumentNumberGeneratedService;
 import com.haritonov.school.docflow.modules.release.dto.ReleaseCreateRequest;
+import com.haritonov.school.docflow.modules.release.dto.ReleaseFilterDto;
 import com.haritonov.school.docflow.modules.release.dto.ReleaseResponse;
 import com.haritonov.school.docflow.modules.release.dto.ReleaseUpdateRequest;
 import com.haritonov.school.docflow.modules.release.service.ReleaseService;
@@ -28,8 +29,9 @@ public class ReleaseController {
     private final DocumentNumberGeneratedService documentNumberGeneratedService;
 
     @GetMapping
-    public String listReleases(Model model) {
-        model.addAttribute("releases", releaseService.getAll());
+    public String listReleases(@ModelAttribute ReleaseFilterDto filter, Model model) {
+        model.addAttribute("releases", releaseService.getAllWithFilter(filter));
+        model.addAttribute("filter", filter);
         model.addAttribute("username", currentUserService.getCurrentEmployeeFullName());
         return "releases/list";
     }

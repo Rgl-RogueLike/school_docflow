@@ -1,5 +1,6 @@
 package com.haritonov.school.docflow.modules.student.controller;
 
+import com.haritonov.school.docflow.modules.student.dto.StudentFilterDto;
 import com.haritonov.school.docflow.modules.student.dto.StudentResponse;
 import com.haritonov.school.docflow.modules.student.dto.StudentUpdateRequest;
 import com.haritonov.school.docflow.modules.student.service.EducationalClassService;
@@ -23,19 +24,26 @@ public class StudentController {
     private final CurrentUserService currentUserService;
 
     @GetMapping
-    public String listStudents(Model model, @RequestParam(required = false) Long classId) {
+    public String listStudents(@ModelAttribute StudentFilterDto filter,
+                               @RequestParam(required = false) Long classId,
+                               Model model) {
         model.addAttribute("classes", classService.getAll());
+        model.addAttribute("username", currentUserService.getCurrentEmployeeFullName());
+        model.addAttribute("filter", filter);
+
         if (classId != null) {
+            filter.setClassName(null);
             List<StudentResponse> students = studentService.getByClassId(classId);
             model.addAttribute("students", students);
             model.addAttribute("selectedClassId", classId);
             model.addAttribute("selectedClass", classService.getById(classId));
             model.addAttribute("title", "Список учеников");
         } else {
-            model.addAttribute("students", null);
-            model.addAttribute("title", "Выберите учебный класс");
+            List<StudentResponse> students = studentService.getAllWithFilter(filter);
+            model.addAttribute("students", students);
+            model.addAttribute("title", "Список учеников");
         }
-        model.addAttribute("username", currentUserService.getCurrentEmployeeFullName());
+
         return "students/list";
     }
 

@@ -219,4 +219,13 @@ public class EnrollmentMoreServiceImpl implements EnrollmentMoreService {
             studentRepository.delete(student);
         }
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<EnrollmentMoreResponse> getAllWithFilter(EnrollmentMoreFilterDto filter) {
+        List<OrderOfEnrollmentMore> orders = enrollmentMoreRepository.findAll(EnrollmentMoreRepository.withFilter(filter));
+        return orders.stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+    }
 }

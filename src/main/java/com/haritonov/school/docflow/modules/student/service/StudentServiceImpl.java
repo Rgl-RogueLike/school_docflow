@@ -1,6 +1,7 @@
 package com.haritonov.school.docflow.modules.student.service;
 
 import com.haritonov.school.docflow.modules.student.dto.StudentCreateRequest;
+import com.haritonov.school.docflow.modules.student.dto.StudentFilterDto;
 import com.haritonov.school.docflow.modules.student.dto.StudentResponse;
 import com.haritonov.school.docflow.modules.student.dto.StudentUpdateRequest;
 import com.haritonov.school.docflow.modules.student.model.EducationalClass;
@@ -104,6 +105,15 @@ public class StudentServiceImpl implements StudentService{
     @Transactional(readOnly = true)
     public List<StudentResponse> getByClassId(Long classId) {
         List<Student> students = studentRepository.findByEducationalClass_Id(classId);
+        return students.stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<StudentResponse> getAllWithFilter(StudentFilterDto filter) {
+        List<Student> students = studentRepository.findAll(StudentRepository.withFilter(filter));
         return students.stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());

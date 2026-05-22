@@ -3,6 +3,7 @@ package com.haritonov.school.docflow.modules.enrollment.controller;
 import com.haritonov.school.docflow.modules.document.model.enums.DocumentPrefix;
 import com.haritonov.school.docflow.modules.document.service.DocumentNumberGeneratedService;
 import com.haritonov.school.docflow.modules.enrollment.dto.EnrollmentCreateRequest;
+import com.haritonov.school.docflow.modules.enrollment.dto.EnrollmentFilterDto;
 import com.haritonov.school.docflow.modules.enrollment.dto.EnrollmentResponse;
 import com.haritonov.school.docflow.modules.enrollment.dto.EnrollmentUpdateRequest;
 import com.haritonov.school.docflow.modules.enrollment.service.EnrollmentService;
@@ -27,8 +28,9 @@ public class EnrollmentController {
     private final DocumentNumberGeneratedService documentNumberGeneratedService;
 
     @GetMapping
-    public String listEnrollments(Model model) {
-        model.addAttribute("enrollments", enrollmentService.getAll());
+    public String listEnrollments(@ModelAttribute EnrollmentFilterDto filter, Model model) {
+        model.addAttribute("enrollments", enrollmentService.getAllWithFilter(filter));
+        model.addAttribute("filter", filter);
         model.addAttribute("username", currentUserService.getCurrentEmployeeFullName());
         return "enrollments/list";
     }

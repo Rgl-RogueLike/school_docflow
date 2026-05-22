@@ -6,43 +6,108 @@
 </head>
 <body>
 <div th:fragment="content">
-    <div th:if="${success}" class="alert alert-success">[[${success}]]</div>
-    <div th:if="${error}" class="alert alert-danger">[[${error}]]</div>
+    <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle"></i> <span th:text="${success}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-triangle"></i> <span th:text="${error}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
 
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2>Приказы о зачислении</h2>
-        <a href="/enrollments/new" class="btn btn-success">+ Новый приказ</a>
+        <a href="/enrollments/new" class="btn btn-success">
+            <i class="bi bi-plus-lg"></i> Новый приказ
+        </a>
+    </div>
+
+    <!-- Форма фильтрации -->
+    <div class="card mb-3">
+        <div class="card-body">
+            <form th:action="@{/enrollments}" th:object="${filter}" method="get" class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Номер приказа</label>
+                    <input type="text" class="form-control" th:field="*{documentNumber}" placeholder="Поиск по номеру">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Ученик</label>
+                    <input type="text" class="form-control" th:field="*{studentName}" placeholder="ФИО ученика">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Класс</label>
+                    <input type="text" class="form-control" th:field="*{className}" placeholder="Название класса">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Создатель</label>
+                    <input type="text" class="form-control" th:field="*{creatorName}" placeholder="ФИО создателя">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Дата приказа от</label>
+                    <input type="date" class="form-control" th:field="*{dateFrom}">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Дата приказа до</label>
+                    <input type="date" class="form-control" th:field="*{dateTo}">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Дата зачисления от</label>
+                    <input type="date" class="form-control" th:field="*{enrollmentDateFrom}">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Дата зачисления до</label>
+                    <input type="date" class="form-control" th:field="*{enrollmentDateTo}">
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-search"></i> Применить
+                        </button>
+                        <a href="/enrollments" class="btn btn-secondary">
+                            <i class="bi bi-x-circle"></i> Сбросить
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
 
     <div th:if="${enrollments.empty}" class="alert alert-info">
-        Нет ни одного приказа. <a href="/enrollments/new">Создать первый</a>
+        <i class="bi bi-info-circle"></i> Нет приказов, соответствующих критериям поиска.
+        <a href="/enrollments/new" class="alert-link">Создать первый приказ</a>
     </div>
 
     <div class="card shadow" th:unless="${enrollments.empty}">
-        <div class="card-header bg-light">Список приказов</div>
+        <div class="card-header bg-light">
+            <i class="bi bi-list-check"></i> Список приказов
+        </div>
         <div class="card-body">
             <table class="table table-hover">
-                <thead>
+                <thead class="table-light">
                 <tr>
-                    <th>№</th>
+                    <th>ID</th>
                     <th>Номер</th>
-                    <th>Дата</th>
+                    <th>Дата приказа</th>
                     <th>Ученик</th>
                     <th>Класс</th>
                     <th>Дата зачисления</th>
+                    <th>Создатель</th>
                     <th>Действия</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr th:each="e : ${enrollments}">
                     <td th:text="${e.id}">1</td>
-                    <td th:text="${e.documentNumber}">Пр-Зач-1-24</td>
+                    <td th:text="${e.documentNumber}">Пр-Зач-1-25</td>
                     <td th:text="${#temporals.format(e.documentDate, 'dd.MM.yyyy')}">...</td>
                     <td th:text="${e.studentFullName}">Иванов Иван</td>
                     <td th:text="${e.className}">10А</td>
                     <td th:text="${#temporals.format(e.enrollmentDate, 'dd.MM.yyyy')}">01.09.2024</td>
+                    <td th:text="${e.creatorFullName}">Петрова Мария</td>
                     <td>
-                        <a th:href="@{/enrollments/{id}(id=${e.id})}" class="btn btn-sm btn-info">Карточка</a>
+                        <a th:href="@{/enrollments/{id}(id=${e.id})}" class="btn btn-sm btn-info">
+                            <i class="bi bi-eye"></i> Карточка
+                        </a>
                     </td>
                 </tr>
                 </tbody>

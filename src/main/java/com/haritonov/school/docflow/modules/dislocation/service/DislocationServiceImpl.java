@@ -1,6 +1,7 @@
 package com.haritonov.school.docflow.modules.dislocation.service;
 
 import com.haritonov.school.docflow.modules.dislocation.dto.DislocationCreateRequest;
+import com.haritonov.school.docflow.modules.dislocation.dto.DislocationFilterDto;
 import com.haritonov.school.docflow.modules.dislocation.dto.DislocationResponse;
 import com.haritonov.school.docflow.modules.dislocation.dto.DislocationUpdateRequest;
 import com.haritonov.school.docflow.modules.dislocation.model.OrderOfTemporaryDislocation;
@@ -113,5 +114,14 @@ public class DislocationServiceImpl implements DislocationService{
             throw new IllegalArgumentException("Документ не найден");
         }
         dislocationRepository.deleteById(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<DislocationResponse> getAllWithFilter(DislocationFilterDto filter) {
+        List<OrderOfTemporaryDislocation> orders = dislocationRepository.findAll(DislocationRepository.withFilter(filter));
+        return orders.stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
     }
 }
