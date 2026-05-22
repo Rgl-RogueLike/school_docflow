@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html th:replace="~{layout :: layout}" lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Редактирование приказа об отчислении</title>
+</head>
+<body>
+<div th:fragment="content">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <i class="bi bi-pencil-square"></i> Редактирование приказа об отчислении
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/releases/{id}/edit(id=${releaseDto.id})}" th:object="${releaseDto}" method="post">
+                        <h5 class="mb-3">Данные приказа</h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label>Номер приказа *</label>
+                                <input type="text" class="form-control" th:field="*{documentNumber}" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label>Дата приказа *</label>
+                                <input type="date" class="form-control" th:field="*{documentDate}" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <label>Ученик *</label>
+                                <select class="form-select" th:field="*{studentId}" required>
+                                    <option th:each="s : ${students}" th:value="${s.id}" th:text="${s.fullName} + ' (' + ${s.className} + ')'"></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <label>Основание</label>
+                                <input type="text" class="form-control" th:field="*{basis}">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label>Дата документа-основания</label>
+                                <input type="date" class="form-control" th:field="*{basisDocumentDate}">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label>Дата начала действия</label>
+                                <input type="date" class="form-control" th:field="*{dateFrom}" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <label>Дата отчисления *</label>
+                                <input type="date" class="form-control" th:field="*{dateOn}" required>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between mt-4">
+                            <a th:href="@{/releases/{id}(id=${releaseDto.id})}" class="btn btn-secondary">Отмена</a>
+                            <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

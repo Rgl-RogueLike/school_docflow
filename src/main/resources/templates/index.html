@@ -10,52 +10,108 @@
 
     <div class="row mb-4">
         <div class="col-12">
-            <h2>Информационная система поддержки документооборота </h2>
-            <p class="text-muted">Выберите необходимый раздел в меню сверху для начала работы.</p>
+            <h2>Информационная система поддержки документооборота</h2>
+            <p class="text-muted">Выберите необходимый раздел в меню сверху или на карточках ниже для начала работы.</p>
         </div>
     </div>
 
     <div class="row">
-        <div class="col-md-3 mb-4">
+        <div class="col-md-4 mb-4">
             <div class="card text-white bg-primary mb-3 h-100">
                 <div class="card-header">Документы</div>
                 <div class="card-body">
-                    <h5 class="card-title">Приказы и Справки</h5>
-                    <p class="card-text">Создание и регистрация приказов о зачислении, передислокации и справок об освобождении.</p>
-                    <a href="/orders" class="btn btn-light btn-sm mt-2">Перейти к приказам</a>
+                    <h5 class="card-title">Приказы о зачислении</h5>
+                    <p class="card-text">Создание и регистрация приказов о зачислении (одиночных и групповых).</p>
+                    <a href="/enrollments" class="btn btn-light btn-sm mt-2">Одиночные</a>
+                    <a href="/enrollments-more" class="btn btn-light btn-sm mt-2">Групповые</a>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-3 mb-4">
-            <div class="card text-white bg-success mb-3 h-100">
-                <div class="card-header">Ученики</div>
+        <div class="col-md-4 mb-4">
+            <div class="card text-white bg-primary mb-3 h-100">
+                <div class="card-header">Документы</div>
                 <div class="card-body">
-                    <h5 class="card-title">Справочник Обучающихся</h5>
+                    <h5 class="card-title">Приказы о перемещении</h5>
+                    <p class="card-text">Временное перемещение учеников между классами.</p>
+                    <a href="/dislocations" class="btn btn-light btn-sm mt-2">Перейти к приказам</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card text-white bg-primary mb-3 h-100">
+                <div class="card-header">Документы</div>
+                <div class="card-body">
+                    <h5 class="card-title">Приказы об отчислении</h5>
+                    <p class="card-text">Оформление отчисления учеников из школы.</p>
+                    <a href="/releases" class="btn btn-light btn-sm mt-2">Перейти к приказам</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card text-white bg-primary mb-3 h-100">
+                <div class="card-header">Документы</div>
+                <div class="card-body">
+                    <h5 class="card-title">Справки об освобождении</h5>
+                    <p class="card-text">Оформление справок об освобождении от занятий.</p>
+                    <a href="/certificates" class="btn btn-light btn-sm mt-2">Перейти к справкам</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card text-white bg-success mb-3 h-100">
+                <div class="card-header">Справочники</div>
+                <div class="card-body">
+                    <h5 class="card-title">Обучающиеся</h5>
                     <p class="card-text">Просмотр списка учеников, их классов и личных дел.</p>
                     <a href="/students" class="btn btn-light btn-sm mt-2">Открыть справочник</a>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-3 mb-4">
-            <div class="card text-white bg-info mb-3 h-100">
-                <div class="card-header">Сотрудники</div>
+        <div class="col-md-4 mb-4">
+            <div class="card text-white bg-success mb-3 h-100">
+                <div class="card-header">Справочники</div>
                 <div class="card-body">
-                    <h5 class="card-title">Персонал школы</h5>
+                    <h5 class="card-title">Учебные классы</h5>
+                    <p class="card-text">Управление списком классов и годов набора.</p>
+                    <a href="/classes" class="btn btn-light btn-sm mt-2">Открыть справочник</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card text-white bg-success mb-3 h-100">
+                <div class="card-header">Справочники</div>
+                <div class="card-body">
+                    <h5 class="card-title">Сотрудники</h5>
                     <p class="card-text">Управление списком сотрудников и их должностей.</p>
                     <a href="/employees" class="btn btn-light btn-sm mt-2">Перейти к сотрудникам</a>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-3 mb-4">
-            <div class="card text-white bg-warning mb-3 h-100">
-                <div class="card-header">Отчеты</div>
+        <div class="col-md-4 mb-4">
+            <div class="card text-white bg-success mb-3 h-100">
+                <div class="card-header">Справочники</div>
                 <div class="card-body">
-                    <h5 class="card-title">Аналитика</h5>
+                    <h5 class="card-title">Должности</h5>
+                    <p class="card-text">Управление справочником должностей.</p>
+                    <a href="/positions" class="btn btn-light btn-sm mt-2">Перейти к должностям</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card text-white bg-warning mb-3 h-100">
+                <div class="card-header">Аналитика</div>
+                <div class="card-body">
+                    <h5 class="card-title">Отчёты</h5>
                     <p class="card-text">Формирование отчетов по движению контингента и справкам.</p>
-                    <a href="/reports" class="btn btn-light btn-sm mt-2">Сформировать отчет</a>
+                    <a href="/reports" class="btn btn-light btn-sm mt-2">Сформировать отчёт</a>
                 </div>
             </div>
         </div>
