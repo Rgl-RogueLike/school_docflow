@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html th:replace="~{layout :: layout}" lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Приказ о зачислении #[[${enrollment.id}]]</title>
+</head>
+<body>
+<div th:fragment="content">
+    <div class="d-flex justify-content-between mb-4">
+        <h2>Приказ о зачислении</h2>
+        <div>
+            <a href="/enrollments" class="btn btn-outline-secondary">← К списку</a>
+            <a th:href="@{/enrollments/{id}/edit(id=${enrollment.id})}" class="btn btn-primary">Редактировать</a>
+            <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">Удалить</button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header bg-light">Данные приказа</div>
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-4">Номер приказа</dt>
+                        <dd class="col-sm-8">[[${enrollment.documentNumber}]]</dd>
+                        <dt class="col-sm-4">Дата приказа</dt>
+                        <dd class="col-sm-8">[[${#temporals.format(enrollment.documentDate, 'dd.MM.yyyy HH:mm')}]]</dd>
+                        <dt class="col-sm-4">Дата зачисления</dt>
+                        <dd class="col-sm-8">[[${#temporals.format(enrollment.enrollmentDate, 'dd.MM.yyyy')}]]</dd>
+                        <dt class="col-sm-4">Класс</dt>
+                        <dd class="col-sm-8">[[${enrollment.className}]]</dd>
+                        <dt class="col-sm-4">Основание</dt>
+                        <dd class="col-sm-8">[[${enrollment.reason}]]</dd>
+                        <dt class="col-sm-4">Создатель</dt>
+                        <dd class="col-sm-8">[[${enrollment.creatorFullName}]]</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header bg-light">Данные ученика</div>
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-4">ФИО</dt>
+                        <dd class="col-sm-8">[[${enrollment.studentFullName}]]</dd>
+                        <dt class="col-sm-4">Пол</dt>
+                        <dd class="col-sm-8">
+                            <span th:if="${enrollment.gender.name() == 'MALE'}">Мужской</span>
+                            <span th:if="${enrollment.gender.name() == 'FEMALE'}">Женский</span>
+                        </dd>
+                        <dt class="col-sm-4">Дата рождения</dt>
+                        <dd class="col-sm-8">[[${#temporals.format(enrollment.dateOfBirth, 'dd.MM.yyyy')}]]</dd>
+                        <dt class="col-sm-4">Класс</dt>
+                        <dd class="col-sm-8">[[${enrollment.className}]]</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="deleteModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header"><h5>Подтверждение</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                <div class="modal-body">Удалить приказ № [[${enrollment.documentNumber}]]?<br>Ученик [[${enrollment.studentFullName}]] будет удалён из системы.</div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <form th:action="@{/enrollments/{id}/delete(id=${enrollment.id})}" method="post">
+                        <button type="submit" class="btn btn-danger">Удалить приказ и ученика</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
