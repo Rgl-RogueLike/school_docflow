@@ -1,5 +1,7 @@
 package com.haritonov.school.docflow.modules.enrollment.controller;
 
+import com.haritonov.school.docflow.modules.document.model.enums.DocumentPrefix;
+import com.haritonov.school.docflow.modules.document.service.DocumentNumberGeneratedService;
 import com.haritonov.school.docflow.modules.enrollment.dto.EnrollmentMoreCreateRequest;
 import com.haritonov.school.docflow.modules.enrollment.dto.EnrollmentMoreItemDto;
 import com.haritonov.school.docflow.modules.enrollment.dto.EnrollmentMoreResponse;
@@ -25,6 +27,7 @@ public class EnrollmentMoreController {
     private final EnrollmentMoreService enrollmentMoreService;
     private final EducationalClassService classService;
     private final CurrentUserService currentUserService;
+    private final DocumentNumberGeneratedService documentNumberGeneratedService;
 
     @GetMapping
     public String listEnrollments(Model model) {
@@ -45,6 +48,11 @@ public class EnrollmentMoreController {
         EnrollmentMoreCreateRequest request = new EnrollmentMoreCreateRequest();
         request.setDocumentDate(LocalDate.now());
         request.setDateFrom(LocalDate.now());
+        String generetedNumber = documentNumberGeneratedService.generatedNumber(
+                DocumentPrefix.ENROLLMENT_MORE,
+                LocalDate.now()
+        );
+        request.setDocumentNumber(generetedNumber);
 
         List<EnrollmentMoreItemDto> items = new ArrayList<>();
         items.add(new EnrollmentMoreItemDto());

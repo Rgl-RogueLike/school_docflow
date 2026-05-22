@@ -4,6 +4,8 @@ import com.haritonov.school.docflow.modules.certificate.dto.CertificateCreateReq
 import com.haritonov.school.docflow.modules.certificate.dto.CertificateResponse;
 import com.haritonov.school.docflow.modules.certificate.dto.CertificateUpdateRequest;
 import com.haritonov.school.docflow.modules.certificate.service.CertificateService;
+import com.haritonov.school.docflow.modules.document.model.enums.DocumentPrefix;
+import com.haritonov.school.docflow.modules.document.service.DocumentNumberGeneratedService;
 import com.haritonov.school.docflow.modules.employee.service.EmployeeService;
 import com.haritonov.school.docflow.modules.student.service.StudentService;
 import com.haritonov.school.docflow.modules.user.service.CurrentUserService;
@@ -25,6 +27,7 @@ public class CertificateController {
     private final StudentService studentService;
     private final EmployeeService employeeService;
     private final CurrentUserService currentUserService;
+    private final DocumentNumberGeneratedService documentNumberGeneratedService;
 
     @GetMapping
     public String listCertificates(Model model) {
@@ -46,6 +49,11 @@ public class CertificateController {
         request.setDocumentDate(LocalDate.now());
         request.setIssueDate(LocalDate.now());
         request.setDateFrom(LocalDate.now());
+        String generatedNumber = documentNumberGeneratedService.generatedNumber(
+                DocumentPrefix.CERTIFICATE,
+                LocalDate.now()
+        );
+        request.setDocumentNumber(generatedNumber);
         model.addAttribute("certificateDto", request);
         model.addAttribute("students", studentService.getAll());
         model.addAttribute("employees", employeeService.getAll());
