@@ -6,41 +6,109 @@
 </head>
 <body>
 <div th:fragment="content">
-  <div th:if="${success}" class="alert alert-success">[[${success}]]</div>
-  <div th:if="${error}" class="alert alert-danger">[[${error}]]</div>
+  <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+    <i class="bi bi-check-circle"></i> <span th:text="${success}"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+  <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+    <i class="bi bi-exclamation-triangle"></i> <span th:text="${error}"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
 
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h2>Приказы о временном перемещении</h2>
-    <a href="/dislocations/new" class="btn btn-success">+ Новый приказ</a>
+    <a href="/dislocations/new" class="btn btn-success">
+      <i class="bi bi-plus-lg"></i> Новый приказ
+    </a>
   </div>
 
-  <div th:if="${dislocations.empty}">
-    <div class="alert alert-info">Нет ни одного приказа. <a href="/dislocations/new">Создать первый</a></div>
+  <div class="card mb-3">
+    <div class="card-body">
+      <form th:action="@{/dislocations}" th:object="${filter}" method="get" class="row g-3">
+        <div class="col-md-3">
+          <label class="form-label">Номер приказа</label>
+          <input type="text" class="form-control" th:field="*{documentNumber}" placeholder="Поиск по номеру">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Ученик</label>
+          <input type="text" class="form-control" th:field="*{studentName}" placeholder="ФИО ученика">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Создатель</label>
+          <input type="text" class="form-control" th:field="*{creatorName}" placeholder="ФИО создателя">
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">Дата приказа от</label>
+          <input type="date" class="form-control" th:field="*{dateFrom}">
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">Дата приказа до</label>
+          <input type="date" class="form-control" th:field="*{dateTo}">
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">Начало перемещения от</label>
+          <input type="date" class="form-control" th:field="*{effectiveStartDateFrom}">
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">Начало перемещения до</label>
+          <input type="date" class="form-control" th:field="*{effectiveStartDateTo}">
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">Окончание перемещения от</label>
+          <input type="date" class="form-control" th:field="*{effectiveEndDateFrom}">
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">Окончание перемещения до</label>
+          <input type="date" class="form-control" th:field="*{effectiveEndDateTo}">
+        </div>
+        <div class="col-md-2 d-flex align-items-end">
+          <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary">
+              <i class="bi bi-search"></i> Применить
+            </button>
+            <a href="/dislocations" class="btn btn-secondary">
+              <i class="bi bi-x-circle"></i> Сбросить
+            </a>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div th:if="${dislocations.empty}" class="alert alert-info">
+    <i class="bi bi-info-circle"></i> Нет приказов, соответствующих критериям поиска.
+    <a href="/dislocations/new" class="alert-link">Создать первый приказ</a>
   </div>
 
   <div class="card shadow" th:unless="${dislocations.empty}">
-    <div class="card-header bg-light">Список приказов</div>
+    <div class="card-header bg-light">
+      <i class="bi bi-list-check"></i> Список приказов
+    </div>
     <div class="card-body">
       <table class="table table-hover">
-        <thead>
+        <thead class="table-light">
         <tr>
-          <th>№</th>
+          <th>ID</th>
           <th>Номер</th>
-          <th>Дата</th>
+          <th>Дата приказа</th>
           <th>Ученик</th>
           <th>Период перемещения</th>
+          <th>Создатель</th>
           <th>Действия</th>
         </tr>
         </thead>
         <tbody>
         <tr th:each="d : ${dislocations}">
           <td th:text="${d.id}">1</td>
-          <td th:text="${d.documentNumber}">Пр-Пер-1-24</td>
+          <td th:text="${d.documentNumber}">Пр-Пер-1-25</td>
           <td th:text="${#temporals.format(d.documentDate, 'dd.MM.yyyy')}">...</td>
           <td th:text="${d.studentFullName}">Иванов Иван</td>
           <td th:text="${#temporals.format(d.effectiveStartDate, 'dd.MM.yyyy')} + ' - ' + ${#temporals.format(d.effectiveEndDate, 'dd.MM.yyyy')}"></td>
+          <td th:text="${d.creatorFullName}">Петрова Мария</td>
           <td>
-            <a th:href="@{/dislocations/{id}(id=${d.id})}" class="btn btn-sm btn-primary">Карточка</a>
+            <a th:href="@{/dislocations/{id}(id=${d.id})}" class="btn btn-sm btn-info">
+              <i class="bi bi-eye"></i> Карточка
+            </a>
           </td>
         </tr>
         </tbody>

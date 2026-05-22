@@ -1,6 +1,7 @@
 package com.haritonov.school.docflow.modules.dislocation.service;
 
 import com.haritonov.school.docflow.modules.dislocation.dto.DislocationCreateRequest;
+import com.haritonov.school.docflow.modules.dislocation.dto.DislocationFilterDto;
 import com.haritonov.school.docflow.modules.dislocation.dto.DislocationResponse;
 import com.haritonov.school.docflow.modules.dislocation.dto.DislocationUpdateRequest;
 
@@ -17,4 +18,6 @@ public interface DislocationService {
     void update(DislocationUpdateRequest request);
 
     void delete(Long id);
+
+    List<DislocationResponse> getAllWithFilter(DislocationFilterDto filter);
 }
