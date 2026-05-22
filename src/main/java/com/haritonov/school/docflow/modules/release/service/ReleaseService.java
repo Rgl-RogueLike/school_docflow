@@ -1,6 +1,7 @@
 package com.haritonov.school.docflow.modules.release.service;
 
 import com.haritonov.school.docflow.modules.release.dto.ReleaseCreateRequest;
+import com.haritonov.school.docflow.modules.release.dto.ReleaseFilterDto;
 import com.haritonov.school.docflow.modules.release.dto.ReleaseResponse;
 import com.haritonov.school.docflow.modules.release.dto.ReleaseUpdateRequest;
 
@@ -17,4 +18,6 @@ public interface ReleaseService {
     void update(ReleaseUpdateRequest request);
 
     void delete(Long id);
+
+    List<ReleaseResponse> getAllWithFilter(ReleaseFilterDto filter);
 }

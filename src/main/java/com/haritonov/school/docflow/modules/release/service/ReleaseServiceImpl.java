@@ -3,6 +3,7 @@ package com.haritonov.school.docflow.modules.release.service;
 import com.haritonov.school.docflow.modules.employee.model.Employee;
 import com.haritonov.school.docflow.modules.employee.repository.EmployeeRepository;
 import com.haritonov.school.docflow.modules.release.dto.ReleaseCreateRequest;
+import com.haritonov.school.docflow.modules.release.dto.ReleaseFilterDto;
 import com.haritonov.school.docflow.modules.release.dto.ReleaseResponse;
 import com.haritonov.school.docflow.modules.release.dto.ReleaseUpdateRequest;
 import com.haritonov.school.docflow.modules.release.model.OrderOfReleaseStudent;
@@ -119,5 +120,14 @@ public class ReleaseServiceImpl implements ReleaseService {
             throw new IllegalArgumentException("Приказ не найден");
         }
         releaseRepository.deleteById(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ReleaseResponse> getAllWithFilter(ReleaseFilterDto filter) {
+        List<OrderOfReleaseStudent> orders = releaseRepository.findAll(ReleaseRepository.withFilter(filter));
+        return orders.stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
     }
 }
