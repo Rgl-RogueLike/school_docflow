@@ -1,6 +1,7 @@
 package com.haritonov.school.docflow.modules.enrollment.service;
 
 import com.haritonov.school.docflow.modules.enrollment.dto.EnrollmentMoreCreateRequest;
+import com.haritonov.school.docflow.modules.enrollment.dto.EnrollmentMoreFilterDto;
 import com.haritonov.school.docflow.modules.enrollment.dto.EnrollmentMoreResponse;
 import com.haritonov.school.docflow.modules.enrollment.dto.EnrollmentMoreUpdateRequest;
 
@@ -17,4 +18,6 @@ public interface EnrollmentMoreService {
     void update(EnrollmentMoreUpdateRequest request);
 
     void delete(Long id);
+
+    List<EnrollmentMoreResponse> getAllWithFilter(EnrollmentMoreFilterDto filter);
 }
