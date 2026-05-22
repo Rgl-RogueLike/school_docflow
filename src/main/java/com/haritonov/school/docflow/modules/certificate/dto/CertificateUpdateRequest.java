@@ -13,5 +13,4 @@ public class CertificateUpdateRequest {
     private LocalDate dateFrom;
     private LocalDate issueDate;
     private Long studentId;
-    private Long creatorId;
 }
