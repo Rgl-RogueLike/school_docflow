@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html th:replace="~{layout :: layout}" lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Новый групповой приказ о зачислении</title>
+</head>
+<body>
+<div th:fragment="content">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <i class="bi bi-file-text"></i> Создание группового приказа о зачислении
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/enrollments-more/new}" th:object="${enrollmentDto}" method="post" id="enrollmentForm">
+                        <!-- Данные приказа -->
+                        <h5 class="mb-3"><i class="bi bi-info-circle"></i> Данные приказа</h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Номер приказа *</label>
+                                <input type="text" class="form-control" th:field="*{documentNumber}" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Дата приказа *</label>
+                                <input type="date" class="form-control" th:field="*{documentDate}" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Дата зачисления *</label>
+                                <input type="date" class="form-control" th:field="*{dateFrom}" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Класс зачисления *</label>
+                                <select class="form-select" th:field="*{classId}" required>
+                                    <option value="">-- выберите --</option>
+                                    <option th:each="c : ${classes}" th:value="${c.id}" th:text="${c.name} + ' (' + ${c.year} + ')'"></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Основание</label>
+                            <textarea class="form-control" th:field="*{basis}" rows="2"></textarea>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <!-- Табличная часть с учениками -->
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="mb-0"><i class="bi bi-people"></i> Список учеников</h5>
+                            <button type="button" class="btn btn-sm btn-primary" id="addRowBtn" onclick="addStudentRow()">
+                                <i class="bi bi-plus-lg"></i> Добавить ученика
+                            </button>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="studentsTable">
+                                <thead class="table-light">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Фамилия *</th>
+                                    <th>Имя *</th>
+                                    <th>Отчество</th>
+                                    <th>Пол *</th>
+                                    <th>Дата рождения *</th>
+                                    <th>Дата зачисления *</th>
+                                    <th style="width: 50px"></th>
+                                </tr>
+                                </thead>
+                                <tbody id="studentsTableBody">
+                                <tr th:each="item, iterStat : ${enrollmentDto.items}">
+                                    <td class="row-number" th:text="${iterStat.count}">1</td>
+                                    <td>
+                                        <input type="text" class="form-control" th:field="*{items[__${iterStat.index}__].lastName}" required>
+                                    </td>
+                                    <td>
+                                        <input type="text" class="form-control" th:field="*{items[__${iterStat.index}__].firstName}" required>
+                                    </td>
+                                    <td>
+                                        <input type="text" class="form-control" th:field="*{items[__${iterStat.index}__].patronymic}">
+                                    </td>
+                                    <td>
+                                        <select class="form-select" th:field="*{items[__${iterStat.index}__].gender}" required>
+                                            <option value="">--</option>
+                                            <option value="MALE">Мужской</option>
+                                            <option value="FEMALE">Женский</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <input type="date" class="form-control" th:field="*{items[__${iterStat.index}__].dateOfBirth}" required>
+                                    </td>
+                                    <td>
+                                        <input type="date" class="form-control" th:field="*{items[__${iterStat.index}__].enrollmentDate}" required>
+                                    </td>
+                                    <td class="text-center">
+                                        <button type="button" class="btn btn-sm btn-danger remove-row-btn" th:if="${iterStat.index > 0}" onclick="removeStudentRow(this)">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="/enrollments-more" class="btn btn-secondary">Отмена</a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-save"></i> Создать приказ и зачислить учеников
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let nextIndex = [[${enrollmentDto.items.size()}]];
+
+        function addStudentRow() {
+            const tbody = document.getElementById('studentsTableBody');
+            const newRow = document.createElement('tr');
+
+            newRow.innerHTML = `
+                <td class="row-number">${nextIndex + 1}</td>
+                <td><input type="text" class="form-control" name="items[${nextIndex}].lastName" required></td>
+                <td><input type="text" class="form-control" name="items[${nextIndex}].firstName" required></td>
+                <td><input type="text" class="form-control" name="items[${nextIndex}].patronymic"></td>
+                <td>
+                    <select class="form-select" name="items[${nextIndex}].gender" required>
+                        <option value="">--</option>
+                        <option value="MALE">Мужской</option>
+                        <option value="FEMALE">Женский</option>
+                    </select>
+                </td>
+                <td><input type="date" class="form-control" name="items[${nextIndex}].dateOfBirth" required></td>
+                <td><input type="date" class="form-control" name="items[${nextIndex}].enrollmentDate" required></td>
+                <td class="text-center">
+                    <button type="button" class="btn btn-sm btn-danger remove-row-btn" onclick="removeStudentRow(this)">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </td>
+            `;
+
+            tbody.appendChild(newRow);
+            nextIndex++;
+            updateRowNumbers();
+        }
+
+        function removeStudentRow(button) {
+            const row = button.closest('tr');
+            row.remove();
+            updateRowNumbers();
+        }
+
+        function updateRowNumbers() {
+            const rows = document.querySelectorAll('#studentsTableBody tr');
+            rows.forEach((row, index) => {
+                const numberCell = row.querySelector('.row-number');
+                if (numberCell) {
+                    numberCell.textContent = index + 1;
+                }
+
+                // Обновляем индексы в name атрибутах
+                const inputs = row.querySelectorAll('input, select');
+                inputs.forEach(input => {
+                    const name = input.getAttribute('name');
+                    if (name) {
+                        input.setAttribute('name', name.replace(/items\[\d+\]/, `items[${index}]`));
+                    }
+                });
+            });
+            nextIndex = rows.length;
+        }
+    </script>
+</div>
+</body>
+</html>

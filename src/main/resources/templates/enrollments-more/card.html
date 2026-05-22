@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html th:replace="~{layout :: layout}" lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Приказ о зачислении #[[${enrollment.id}]]</title>
+</head>
+<body>
+<div th:fragment="content">
+    <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle"></i> <span th:text="${success}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-triangle"></i> <span th:text="${error}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div class="d-flex justify-content-between mb-4">
+        <h2><i class="bi bi-file-text"></i> Приказ о зачислении (групповой)</h2>
+        <div>
+            <a href="/enrollments-more" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> К списку
+            </a>
+            <a th:href="@{/enrollments-more/{id}/edit(id=${enrollment.id})}" class="btn btn-primary">
+                <i class="bi bi-pencil"></i> Редактировать
+            </a>
+            <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                <i class="bi bi-trash"></i> Удалить
+            </button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card shadow mb-4">
+                <div class="card-header bg-light">
+                    <i class="bi bi-info-circle"></i> Данные приказа
+                </div>
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-4">Номер приказа</dt>
+                        <dd class="col-sm-8" th:text="${enrollment.documentNumber}">-</dd>
+
+                        <dt class="col-sm-4">Дата приказа</dt>
+                        <dd class="col-sm-8" th:text="${#temporals.format(enrollment.documentDate, 'dd.MM.yyyy HH:mm')}">-</dd>
+
+                        <dt class="col-sm-4">Основание</dt>
+                        <dd class="col-sm-8" th:text="${enrollment.basis}">-</dd>
+
+                        <dt class="col-sm-4">Дата зачисления</dt>
+                        <dd class="col-sm-8" th:text="${#temporals.format(enrollment.dateFrom, 'dd.MM.yyyy')}">-</dd>
+
+                        <dt class="col-sm-4">Класс</dt>
+                        <dd class="col-sm-8" th:text="${enrollment.className}">-</dd>
+
+                        <dt class="col-sm-4">Создатель</dt>
+                        <dd class="col-sm-8" th:text="${enrollment.creatorFullName}">-</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow">
+        <div class="card-header bg-light">
+            <i class="bi bi-people"></i> Список зачисленных учеников
+        </div>
+        <div class="card-body">
+            <table class="table table-hover">
+                <thead class="table-light">
+                <tr>
+                    <th>#</th>
+                    <th>Фамилия</th>
+                    <th>Имя</th>
+                    <th>Отчество</th>
+                    <th>Пол</th>
+                    <th>Дата рождения</th>
+                    <th>Дата зачисления</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="item, iterStat : ${enrollment.items}">
+                    <td th:text="${iterStat.count}">1</td>
+                    <td th:text="${item.lastName}">Иванов</td>
+                    <td th:text="${item.firstName}">Иван</td>
+                    <td th:text="${item.patronymic}">Иванович</td>
+                    <td>
+                        <span th:if="${item.gender.name() == 'MALE'}">Мужской</span>
+                        <span th:if="${item.gender.name() == 'FEMALE'}">Женский</span>
+                    </td>
+                    <td th:text="${#temporals.format(item.dateOfBirth, 'dd.MM.yyyy')}">01.01.2010</td>
+                    <td th:text="${#temporals.format(item.enrollmentDate, 'dd.MM.yyyy')}">01.09.2024</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="modal fade" id="deleteModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-exclamation-triangle"></i> Подтверждение удаления</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Вы действительно хотите удалить приказ <strong th:text="${enrollment.documentNumber}"></strong>?</p>
+                    <p class="text-danger">Внимание! Будут удалены все <strong th:text="${#lists.size(enrollment.items)}"></strong> учеников, зачисленных по этому приказу!</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <form th:action="@{/enrollments-more/{id}/delete(id=${enrollment.id})}" method="post">
+                        <button type="submit" class="btn btn-danger">Удалить приказ и учеников</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

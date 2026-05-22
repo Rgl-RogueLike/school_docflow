@@ -37,7 +37,7 @@ public class CertificateController {
     public String viewCertificate(@PathVariable Long id, Model model) {
         model.addAttribute("certificate", certificateService.getById(id));
         model.addAttribute("username", currentUserService.getCurrentEmployeeFullName());
-        return "certificate/card";
+        return "certificates/card";
     }
 
     @GetMapping("/new")
