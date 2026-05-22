@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html th:replace="~{layout :: layout}" lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Справка #[[${certificate.id}]]</title>
+</head>
+<body>
+<div th:fragment="content">
+    <div class="d-flex justify-content-between mb-4">
+        <h2>Справка об освобождении</h2>
+        <div>
+            <a href="/certificates" class="btn btn-outline-secondary">← К списку</a>
+            <a th:href="@{/certificates/{id}/edit(id=${certificate.id})}" class="btn btn-primary">Редактировать</a>
+            <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">Удалить</button>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3">Номер документа</dt><dd class="col-sm-9">[[${certificate.documentNumber}]]</dd>
+                <dt class="col-sm-3">Дата документа</dt><dd class="col-sm-9">[[${#temporals.format(certificate.documentDate, 'dd.MM.yyyy HH:mm')}]]</dd>
+                <dt class="col-sm-3">Ученик</dt><dd class="col-sm-9">[[${certificate.studentFullName}]]</dd>
+                <dt class="col-sm-3">Цель освобождения</dt><dd class="col-sm-9">[[${certificate.purpose}]]</dd>
+                <dt class="col-sm-3">Дата начала</dt><dd class="col-sm-9">[[${#temporals.format(certificate.dateFrom, 'dd.MM.yyyy')}]]</dd>
+                <dt class="col-sm-3">Дата окончания</dt><dd class="col-sm-9">[[${#temporals.format(certificate.issueDate, 'dd.MM.yyyy')}]]</dd>
+                <dt class="col-sm-3">Создатель</dt><dd class="col-sm-9">[[${certificate.creatorFullName}]]</dd>
+            </dl>
+        </div>
+    </div>
+
+    <!-- Modal подтверждения удаления -->
+    <div class="modal fade" id="deleteModal" tabindex="-1">
+        <div class="modal-dialog"><div class="modal-content">
+            <div class="modal-header"><h5>Подтверждение</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+            <div class="modal-body">Удалить справку № [[${certificate.documentNumber}]]?</div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                <form th:action="@{/certificates/{id}/delete(id=${certificate.id})}" method="post">
+                    <button type="submit" class="btn btn-danger">Удалить</button>
+                </form>
+            </div>
+        </div></div>
+    </div>
+</div>
+</body>
+</html>

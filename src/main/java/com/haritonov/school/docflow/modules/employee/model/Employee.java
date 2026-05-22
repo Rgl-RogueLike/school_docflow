@@ -1,5 +1,6 @@
 package com.haritonov.school.docflow.modules.employee.model;
 
+import com.haritonov.school.docflow.modules.user.model.AppUser;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,6 +33,9 @@ public class Employee {
 
     @Column(name = "date_of_employment")
     private LocalDate dateOfEmployment;
+
+    @OneToOne(mappedBy = "employee")
+    private AppUser user;
 
     @ManyToOne
     private Position position;

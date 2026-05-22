@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html th:replace="~{layout :: layout}" lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Учебные классы</title>
+</head>
+<body>
+
+<div th:fragment="content">
+    <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle"></i> <span th:text="${success}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-triangle"></i> <span th:text="${error}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Справочник классов</h2>
+        <a href="/classes/new" class="btn btn-success">
+            <i class="bi bi-plus-lg"></i> Добавить класс
+        </a>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <table class="table table-hover">
+                <thead class="table-light">
+                <tr>
+                    <th>ID</th>
+                    <th>Название</th>
+                    <th>Год набора</th>
+                    <th>Действия</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="c : ${classes}">
+                    <td th:text="${c.id}">1</td>
+                    <td th:text="${c.name}">10А</td>
+                    <td th:text="${c.year}">2023</td>
+                    <td>
+                        <a th:href="@{/classes/{id}/edit(id=${c.id})}" class="btn btn-sm btn-primary">
+                            <i class="bi bi-pencil"></i> Ред.
+                        </a>
+                        <button type="button" class="btn btn-sm btn-danger"
+                                data-bs-toggle="modal"
+                                data-bs-target="#deleteModal"
+                                th:data-id="${c.id}"
+                                th:data-name="${c.name}">
+                            <i class="bi bi-trash"></i> Уд.
+                        </button>
+                    </td>
+                </tr>
+                <tr th:if="${classes.isEmpty()}">
+                    <td colspan="4" class="text-center text-muted">Список пуст. Добавьте первый класс.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Подтверждение удаления</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Вы действительно хотите удалить класс?</p>
+                    <p class="fw-bold" id="classNameToDelete"></p>
+                    <p class="text-warning">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        Внимание: если в классе есть ученики, удаление будет невозможно!
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <form id="deleteForm" method="post" style="display: inline;">
+                        <button type="submit" class="btn btn-danger">Удалить</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Обработчик для модального окна
+        document.addEventListener('DOMContentLoaded', function() {
+            const deleteModal = document.getElementById('deleteModal');
+            if (deleteModal) {
+                deleteModal.addEventListener('show.bs.modal', function(event) {
+                    const button = event.relatedTarget;
+                    const classId = button.getAttribute('data-id');
+                    const className = button.getAttribute('data-name');
+
+                    const classNameSpan = document.getElementById('classNameToDelete');
+                    if (classNameSpan) {
+                        classNameSpan.textContent = className;
+                    }
+
+                    const deleteForm = document.getElementById('deleteForm');
+                    if (deleteForm) {
+                        deleteForm.action = '/classes/' + classId + '/delete';
+                    }
+                });
+            }
+        });
+    </script>
+
+</body>
+</html>

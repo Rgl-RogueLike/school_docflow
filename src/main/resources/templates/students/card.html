@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html th:replace="~{layout :: layout}" lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${title}">Карточка ученика</title>
+</head>
+<body>
+
+<div th:fragment="content">
+    <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle"></i> <span th:text="${success}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-triangle"></i> <span th:text="${error}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 th:text="${title}">Карточка ученика</h2>
+        <div>
+            <a href="javascript:history.back()" class="btn btn-outline-secondary me-2">
+                ← Назад
+            </a>
+            <a th:href="@{/students(classId=${student.classId})}" class="btn btn-outline-primary">
+                К списку классов
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card shadow">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Личная информация</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-borderless">
+                        <tbody>
+                        <tr>
+                            <th style="width: 30%;" class="text-muted">Фамилия:</th>
+                            <td th:text="${student.lastName}">Иванов</td>
+                        </tr>
+                        <tr>
+                            <th class="text-muted">Имя:</th>
+                            <td th:text="${student.firstName}">Иван</td>
+                        </tr>
+                        <tr th:if="${student.patronymic != null}">
+                            <th class="text-muted">Отчество:</th>
+                            <td th:text="${student.patronymic}">Иванович</td>
+                        </tr>
+                        <tr>
+                            <th class="text-muted">Пол:</th>
+                            <td>
+                                <span th:if="${student.gender.name() == 'MALE'}">Мужской</span>
+                                <span th:if="${student.gender.name() == 'FEMALE'}">Женский</span>
+                                <span th:if="${student.gender == null}">Не указан</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="text-muted">Дата рождения:</th>
+                            <td th:text="${#temporals.format(student.dateOfBirth, 'dd.MM.yyyy')}">01.01.2010</td>
+                        </tr>
+                        <tr th:if="${student.dateOfEnrollment != null}">
+                            <th class="text-muted">Дата поступления:</th>
+                            <td th:text="${#temporals.format(student.dateOfEnrollment, 'dd.MM.yyyy')}">01.09.2024</td>
+                        </tr>
+                        <tr>
+                            <th class="text-muted">Класс:</th>
+                            <td th:text="${student.className}">10А</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card shadow mt-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Действия</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex gap-2">
+                        <a th:href="@{/students/{id}/edit(id=${student.id})}" class="btn btn-primary">
+                            <i class="bi bi-pencil"></i> Редактировать
+                        </a>
+                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                            <i class="bi bi-trash"></i> Удалить
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="deleteModalLabel">Подтверждение удаления</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Вы действительно хотите удалить ученика?</p>
+                            <p class="fw-bold" th:text="${student.fullName}">Иванов Иван Иванович</p>
+                            <p class="text-danger">Это действие нельзя отменить!</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                            <form th:action="@{/students/{id}/delete(id=${student.id})}" method="post" style="display: inline;">
+                                <input type="hidden" name="classId" th:value="${student.classId}">
+                                <button type="submit" class="btn btn-danger">Удалить</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

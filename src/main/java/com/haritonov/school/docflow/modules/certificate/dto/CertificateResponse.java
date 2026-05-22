@@ -14,5 +14,6 @@ public class CertificateResponse {
     private LocalDate dateFrom;
     private LocalDate issueDate;
     private String studentFullName;
+    private Long studentId;
     private String creatorFullName;
 }

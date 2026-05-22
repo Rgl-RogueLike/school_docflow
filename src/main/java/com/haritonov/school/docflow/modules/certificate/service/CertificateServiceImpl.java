@@ -34,6 +34,7 @@ public class CertificateServiceImpl implements CertificateService {
         response.setIssueDate(entity.getIssueDate());
         if (entity.getStudent() != null) {
             Student student = entity.getStudent();
+            response.setStudentId(student.getId());
             response.setStudentFullName(student.getLastName() + " " + student.getFirstName() +
                     (student.getPatronymic() != null ? " " + student.getPatronymic() : " "));
         }
@@ -89,15 +90,12 @@ public class CertificateServiceImpl implements CertificateService {
                 .orElseThrow(() -> new IllegalArgumentException("Справка не найдена"));
         Student student = studentRepository.findById(request.getStudentId())
                 .orElseThrow(() -> new IllegalArgumentException("Ученик не найден"));
-        Employee employee = employeeRepository.findById(request.getCreatorId())
-                .orElseThrow(() -> new IllegalArgumentException("Сотрудник не найден"));
         certificate.setDocumentNumber(request.getDocumentNumber());
         certificate.setDocumentDate(request.getDocumentDate().atStartOfDay());
         certificate.setPurpose(request.getPurpose());
         certificate.setDateFrom(request.getDateFrom());
         certificate.setIssueDate(request.getIssueDate());
         certificate.setStudent(student);
-        certificate.setCreator(employee);
         certificateRepository.save(certificate);
     }
 
