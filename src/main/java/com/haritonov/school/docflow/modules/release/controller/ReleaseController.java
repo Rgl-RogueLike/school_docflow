@@ -1,5 +1,7 @@
 package com.haritonov.school.docflow.modules.release.controller;
 
+import com.haritonov.school.docflow.modules.document.model.enums.DocumentPrefix;
+import com.haritonov.school.docflow.modules.document.service.DocumentNumberGeneratedService;
 import com.haritonov.school.docflow.modules.release.dto.ReleaseCreateRequest;
 import com.haritonov.school.docflow.modules.release.dto.ReleaseResponse;
 import com.haritonov.school.docflow.modules.release.dto.ReleaseUpdateRequest;
@@ -23,6 +25,7 @@ public class ReleaseController {
     private final ReleaseService releaseService;
     private final StudentService studentService;
     private final CurrentUserService currentUserService;
+    private final DocumentNumberGeneratedService documentNumberGeneratedService;
 
     @GetMapping
     public String listReleases(Model model) {
@@ -45,6 +48,11 @@ public class ReleaseController {
         request.setBasisDocumentDate(LocalDate.now());
         request.setDateFrom(LocalDate.now());
         request.setDateOn(LocalDate.now());
+        String generatedNumber = documentNumberGeneratedService.generatedNumber(
+                DocumentPrefix.RELEASE,
+                LocalDate.now()
+        );
+        request.setDocumentNumber(generatedNumber);
         model.addAttribute("releaseDto", request);
         model.addAttribute("students", studentService.getAll());
         model.addAttribute("username", currentUserService.getCurrentEmployeeFullName());

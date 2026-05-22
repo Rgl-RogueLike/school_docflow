@@ -1,49 +1,46 @@
 <!DOCTYPE html>
 <html th:replace="~{layout :: layout}" lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Редактирование справки</title>
+    <title>Редактирование справки об освобождении</title>
 </head>
 <body>
 <div th:fragment="content">
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <div class="card">
-                <div class="card-header bg-primary text-white">Редактирование справки</div>
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <i class="bi bi-pencil-square"></i> Редактирование справки об освобождении
+                </div>
                 <div class="card-body">
                     <form th:action="@{/certificates/{id}/edit(id=${certificateDto.id})}" th:object="${certificateDto}" method="post">
-                        <!-- Поля аналогично форме создания, но с предзаполненными значениями -->
                         <div class="mb-3">
-                            <label>Номер документа</label>
-                            <input type="text" class="form-control" th:field="*{documentNumber}" required>
+                            <label class="form-label">Номер справки</label>
+                            <input type="text" class="form-control" th:field="*{documentNumber}" readonly>
+                            <small class="text-muted">Номер изменять нельзя</small>
                         </div>
                         <div class="mb-3">
-                            <label>Дата документа</label>
+                            <label class="form-label">Дата документа</label>
                             <input type="date" class="form-control" th:field="*{documentDate}" required>
                         </div>
                         <div class="mb-3">
-                            <label>Ученик</label>
+                            <label class="form-label">Ученик</label>
                             <select class="form-select" th:field="*{studentId}" required>
                                 <option th:each="s : ${students}" th:value="${s.id}" th:text="${s.fullName}"></option>
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label>Цель освобождения</label>
-                            <textarea class="form-control" th:field="*{purpose}" rows="2"></textarea>
+                            <label class="form-label">Цель освобождения</label>
+                            <textarea class="form-control" th:field="*{purpose}" rows="3"></textarea>
                         </div>
                         <div class="mb-3">
-                            <label>Дата начала</label>
+                            <label class="form-label">Дата начала</label>
                             <input type="date" class="form-control" th:field="*{dateFrom}" required>
                         </div>
                         <div class="mb-3">
-                            <label>Дата окончания</label>
+                            <label class="form-label">Дата окончания</label>
                             <input type="date" class="form-control" th:field="*{issueDate}" required>
                         </div>
-                        <div class="mb-3">
-                            <label>Сотрудник (создатель)</label>
-                            <select class="form-select" th:field="*{creatorId}" required>
-                                <option th:each="e : ${employees}" th:value="${e.id}" th:text="${e.fullName}"></option>
-                            </select>
-                        </div>
+
                         <div class="d-flex justify-content-between">
                             <a th:href="@{/certificates/{id}(id=${certificateDto.id})}" class="btn btn-secondary">Отмена</a>
                             <button type="submit" class="btn btn-primary">Сохранить изменения</button>

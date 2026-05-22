@@ -13,13 +13,8 @@
                 </div>
                 <div class="card-body">
                     <form th:action="@{/enrollments-more/new}" th:object="${enrollmentDto}" method="post" id="enrollmentForm">
-                        <!-- Данные приказа -->
                         <h5 class="mb-3"><i class="bi bi-info-circle"></i> Данные приказа</h5>
                         <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Номер приказа *</label>
-                                <input type="text" class="form-control" th:field="*{documentNumber}" required>
-                            </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Дата приказа *</label>
                                 <input type="date" class="form-control" th:field="*{documentDate}" required>
@@ -45,7 +40,6 @@
 
                         <hr class="my-4">
 
-                        <!-- Табличная часть с учениками -->
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h5 class="mb-0"><i class="bi bi-people"></i> Список учеников</h5>
                             <button type="button" class="btn btn-sm btn-primary" id="addRowBtn" onclick="addStudentRow()">

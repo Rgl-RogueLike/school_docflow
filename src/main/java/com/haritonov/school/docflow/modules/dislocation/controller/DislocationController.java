@@ -4,6 +4,8 @@ import com.haritonov.school.docflow.modules.dislocation.dto.DislocationCreateReq
 import com.haritonov.school.docflow.modules.dislocation.dto.DislocationResponse;
 import com.haritonov.school.docflow.modules.dislocation.dto.DislocationUpdateRequest;
 import com.haritonov.school.docflow.modules.dislocation.service.DislocationService;
+import com.haritonov.school.docflow.modules.document.model.enums.DocumentPrefix;
+import com.haritonov.school.docflow.modules.document.service.DocumentNumberGeneratedService;
 import com.haritonov.school.docflow.modules.student.service.StudentService;
 import com.haritonov.school.docflow.modules.user.service.CurrentUserService;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,7 @@ public class DislocationController {
     private final DislocationService dislocationService;
     private final StudentService studentService;
     private final CurrentUserService currentUserService;
+    private final DocumentNumberGeneratedService documentNumberGeneratedService;
 
     @GetMapping
     public String listDislocations(Model model) {
@@ -45,6 +48,11 @@ public class DislocationController {
         request.setDateFrom(LocalDate.now());
         request.setEffectiveStartDate(LocalDate.now());
         request.setEffectiveEndDate(LocalDate.now());
+        String generatedNumber = documentNumberGeneratedService.generatedNumber(
+                DocumentPrefix.DISLOCATION,
+                LocalDate.now()
+        );
+        request.setDocumentNumber(generatedNumber);
         model.addAttribute("dislocationDto", request);
         model.addAttribute("students", studentService.getAll());
         model.addAttribute("username", currentUserService.getCurrentEmployeeFullName());

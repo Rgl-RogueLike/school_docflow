@@ -11,9 +11,10 @@
                 <div class="card-header bg-success text-white">Создание справки об освобождении</div>
                 <div class="card-body">
                     <form th:action="@{/certificates/new}" th:object="${certificateDto}" method="post">
-                        <div class="mb-3">
-                            <label>Номер документа</label>
-                            <input type="text" class="form-control" th:field="*{documentNumber}" placeholder="например, Спр-Осв-1-24">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Номер справки</label>
+                            <input type="text" class="form-control" th:field="*{documentNumber}" readonly>
+                            <small class="text-muted">Номер генерируется автоматически</small>
                         </div>
                         <div class="mb-3">
                             <label>Дата документа</label>
