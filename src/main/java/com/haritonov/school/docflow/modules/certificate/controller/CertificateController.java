@@ -1,6 +1,7 @@
 package com.haritonov.school.docflow.modules.certificate.controller;
 
 import com.haritonov.school.docflow.modules.certificate.dto.CertificateCreateRequest;
+import com.haritonov.school.docflow.modules.certificate.dto.CertificateFilterDto;
 import com.haritonov.school.docflow.modules.certificate.dto.CertificateResponse;
 import com.haritonov.school.docflow.modules.certificate.dto.CertificateUpdateRequest;
 import com.haritonov.school.docflow.modules.certificate.service.CertificateService;
@@ -30,8 +31,9 @@ public class CertificateController {
     private final DocumentNumberGeneratedService documentNumberGeneratedService;
 
     @GetMapping
-    public String listCertificates(Model model) {
-        model.addAttribute("certificates", certificateService.getAll());
+    public String listCertificates(@ModelAttribute CertificateFilterDto filter, Model model) {
+        model.addAttribute("certificates", certificateService.getAllWithFilter(filter));
+        model.addAttribute("filter", filter);
         model.addAttribute("username", currentUserService.getCurrentEmployeeFullName());
         return "certificates/list";
     }

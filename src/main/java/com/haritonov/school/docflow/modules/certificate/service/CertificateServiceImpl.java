@@ -1,6 +1,7 @@
 package com.haritonov.school.docflow.modules.certificate.service;
 
 import com.haritonov.school.docflow.modules.certificate.dto.CertificateCreateRequest;
+import com.haritonov.school.docflow.modules.certificate.dto.CertificateFilterDto;
 import com.haritonov.school.docflow.modules.certificate.dto.CertificateResponse;
 import com.haritonov.school.docflow.modules.certificate.dto.CertificateUpdateRequest;
 import com.haritonov.school.docflow.modules.certificate.model.CertificateOfStudy;
@@ -106,5 +107,14 @@ public class CertificateServiceImpl implements CertificateService {
             throw new IllegalArgumentException("Справка не найдена");
         }
         certificateRepository.deleteById(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<CertificateResponse> getAllWithFilter(CertificateFilterDto filter) {
+        List<CertificateOfStudy> certificates = certificateRepository.findAll(CertificateRepository.withFilter(filter));
+        return certificates.stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
     }
 }
