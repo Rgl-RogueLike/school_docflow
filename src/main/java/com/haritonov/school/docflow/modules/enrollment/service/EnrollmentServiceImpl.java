@@ -1,6 +1,7 @@
 package com.haritonov.school.docflow.modules.enrollment.service;
 
 import com.haritonov.school.docflow.modules.enrollment.dto.EnrollmentCreateRequest;
+import com.haritonov.school.docflow.modules.enrollment.dto.EnrollmentFilterDto;
 import com.haritonov.school.docflow.modules.enrollment.dto.EnrollmentResponse;
 import com.haritonov.school.docflow.modules.enrollment.dto.EnrollmentUpdateRequest;
 import com.haritonov.school.docflow.modules.enrollment.model.OrderOfEnrollment;
@@ -147,5 +148,14 @@ public class EnrollmentServiceImpl implements EnrollmentService {
         if (student != null) {
             studentRepository.delete(student);
         }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<EnrollmentResponse> getAllWithFilter(EnrollmentFilterDto filter) {
+        List<OrderOfEnrollment> enrollments = enrollmentRepository.findAll(EnrollmentRepository.withFilter(filter));
+        return enrollments.stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
     }
 }
