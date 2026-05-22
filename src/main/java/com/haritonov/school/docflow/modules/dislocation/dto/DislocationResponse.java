@@ -16,5 +16,6 @@ public class DislocationResponse {
     private LocalDate effectiveStartDate;
     private LocalDate effectiveEndDate;
     private String studentFullName;
+    private Long studentId;
     private String creatorFullName;
 }

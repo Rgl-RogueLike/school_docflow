@@ -36,6 +36,7 @@ public class DislocationServiceImpl implements DislocationService{
         response.setEffectiveEndDate(entity.getEffectiveEndDate());
         if (entity.getStudent() != null) {
             Student student = entity.getStudent();
+            response.setStudentId(student.getId());
             response.setStudentFullName(student.getLastName() + student.getFirstName() +
                     (student.getPatronymic() != null ? student.getPatronymic() : " "));
         }
