@@ -5,13 +5,12 @@ import lombok.Data;
 import java.time.LocalDate;
 
 @Data
-public class CertificateCreateRequest {
-
+public class ExemptionOrderUpdateRequest {
+    private Long id;
     private String documentNumber;
     private LocalDate documentDate;
     private String purpose;
     private LocalDate dateFrom;
     private LocalDate issueDate;
     private Long studentId;
-    private Long creatorId;
 }

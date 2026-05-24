@@ -1,12 +1,12 @@
 package com.haritonov.school.docflow.modules.certificate.service;
 
-import com.haritonov.school.docflow.modules.certificate.dto.CertificateCreateRequest;
-import com.haritonov.school.docflow.modules.certificate.dto.CertificateFilterDto;
-import com.haritonov.school.docflow.modules.certificate.dto.CertificateResponse;
-import com.haritonov.school.docflow.modules.certificate.dto.CertificateUpdateRequest;
-import com.haritonov.school.docflow.modules.certificate.model.CertificateOfStudy;
-import com.haritonov.school.docflow.modules.certificate.model.enums.CertificateStatus;
-import com.haritonov.school.docflow.modules.certificate.repository.CertificateRepository;
+import com.haritonov.school.docflow.modules.certificate.dto.ExemptionOrderCreateRequest;
+import com.haritonov.school.docflow.modules.certificate.dto.ExemptionOrderFilterDto;
+import com.haritonov.school.docflow.modules.certificate.dto.ExemptionOrderResponse;
+import com.haritonov.school.docflow.modules.certificate.dto.ExemptionOrderUpdateRequest;
+import com.haritonov.school.docflow.modules.certificate.model.OrderOfExemption;
+import com.haritonov.school.docflow.modules.certificate.model.enums.ExemptionOrderStatus;
+import com.haritonov.school.docflow.modules.certificate.repository.ExemptionOrderRepository;
 import com.haritonov.school.docflow.modules.employee.model.Employee;
 import com.haritonov.school.docflow.modules.employee.repository.EmployeeRepository;
 import com.haritonov.school.docflow.modules.student.model.Student;
@@ -22,14 +22,14 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class CertificateServiceImpl implements CertificateService {
+public class ExemptionOrderServiceImpl implements ExemptionOrderService {
 
-    private final CertificateRepository certificateRepository;
+    private final ExemptionOrderRepository certificateRepository;
     private final StudentRepository studentRepository;
     private final EmployeeRepository employeeRepository;
 
-    private CertificateResponse mapToResponse(CertificateOfStudy entity) {
-        CertificateResponse response = new CertificateResponse();
+    private ExemptionOrderResponse mapToResponse(OrderOfExemption entity) {
+        ExemptionOrderResponse response = new ExemptionOrderResponse();
         response.setId(entity.getId());
         response.setDocumentNumber(entity.getDocumentNumber());
         response.setDocumentDate(entity.getDocumentDate());
@@ -52,34 +52,34 @@ public class CertificateServiceImpl implements CertificateService {
         return response;
     }
 
-    private CertificateStatus calculateStatus(CertificateOfStudy certificate) {
+    private ExemptionOrderStatus calculateStatus(OrderOfExemption certificate) {
         LocalDate now = LocalDate.now();
         LocalDate start = certificate.getDateFrom();
         LocalDate end = certificate.getIssueDate();
 
         if (start == null || end == null) {
-            return CertificateStatus.EXPIRED; // или неизвестно
+            return ExemptionOrderStatus.EXPIRED; // или неизвестно
         }
 
         if (now.isBefore(start)) {
-            return CertificateStatus.NOT_STARTED;
+            return ExemptionOrderStatus.NOT_STARTED;
         } else if (now.isAfter(end)) {
-            return CertificateStatus.EXPIRED;
+            return ExemptionOrderStatus.EXPIRED;
         } else if (ChronoUnit.DAYS.between(now, end) <= 3) {
-            return CertificateStatus.EXPIRING_SOON;
+            return ExemptionOrderStatus.EXPIRING_SOON;
         } else {
-            return CertificateStatus.ACTIVE;
+            return ExemptionOrderStatus.ACTIVE;
         }
     }
 
     @Override
     @Transactional
-    public Long create(CertificateCreateRequest request) {
+    public Long create(ExemptionOrderCreateRequest request) {
         Student student = studentRepository.findById(request.getStudentId())
                 .orElseThrow(() -> new IllegalArgumentException("Ученик не найден"));
         Employee employee = employeeRepository.findById(request.getCreatorId())
                 .orElseThrow(() -> new IllegalArgumentException("Сотрудник не найден"));
-        CertificateOfStudy certificate = new CertificateOfStudy();
+        OrderOfExemption certificate = new OrderOfExemption();
         certificate.setDocumentNumber(request.getDocumentNumber());
         certificate.setDocumentDate(request.getDocumentDate().atStartOfDay());
         certificate.setPurpose(request.getPurpose());
@@ -87,14 +87,14 @@ public class CertificateServiceImpl implements CertificateService {
         certificate.setIssueDate(request.getIssueDate());
         certificate.setStudent(student);
         certificate.setCreator(employee);
-        CertificateOfStudy savedCertificate = certificateRepository.save(certificate);
+        OrderOfExemption savedCertificate = certificateRepository.save(certificate);
         return savedCertificate.getId();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<CertificateResponse> getAll() {
-        List<CertificateOfStudy> certificates = certificateRepository.findAll();
+    public List<ExemptionOrderResponse> getAll() {
+        List<OrderOfExemption> certificates = certificateRepository.findAll();
         return certificates.stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
@@ -102,16 +102,16 @@ public class CertificateServiceImpl implements CertificateService {
 
     @Override
     @Transactional(readOnly = true)
-    public CertificateResponse getById(Long id) {
-        CertificateOfStudy certificate = certificateRepository.findById(id)
+    public ExemptionOrderResponse getById(Long id) {
+        OrderOfExemption certificate = certificateRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Справка не найдена"));
         return mapToResponse(certificate);
     }
 
     @Override
     @Transactional
-    public void update(CertificateUpdateRequest request) {
-        CertificateOfStudy certificate = certificateRepository.findById(request.getId())
+    public void update(ExemptionOrderUpdateRequest request) {
+        OrderOfExemption certificate = certificateRepository.findById(request.getId())
                 .orElseThrow(() -> new IllegalArgumentException("Справка не найдена"));
         Student student = studentRepository.findById(request.getStudentId())
                 .orElseThrow(() -> new IllegalArgumentException("Ученик не найден"));
@@ -135,8 +135,8 @@ public class CertificateServiceImpl implements CertificateService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<CertificateResponse> getAllWithFilter(CertificateFilterDto filter) {
-        List<CertificateOfStudy> certificates = certificateRepository.findAll(CertificateRepository.withFilter(filter));
+    public List<ExemptionOrderResponse> getAllWithFilter(ExemptionOrderFilterDto filter) {
+        List<OrderOfExemption> certificates = certificateRepository.findAll(ExemptionOrderRepository.withFilter(filter));
         return certificates.stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());

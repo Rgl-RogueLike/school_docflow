@@ -14,7 +14,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Entity
 @Table(name = "certificate_of_study")
-public class CertificateOfStudy extends Document {
+public class OrderOfExemption extends Document {
 
     @Column(name = "issue_date")
     private LocalDate issueDate;

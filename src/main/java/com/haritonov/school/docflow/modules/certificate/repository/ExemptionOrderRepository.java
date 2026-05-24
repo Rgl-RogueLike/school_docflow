@@ -1,7 +1,7 @@
 package com.haritonov.school.docflow.modules.certificate.repository;
 
-import com.haritonov.school.docflow.modules.certificate.model.CertificateOfStudy;
-import com.haritonov.school.docflow.modules.certificate.dto.CertificateFilterDto;
+import com.haritonov.school.docflow.modules.certificate.model.OrderOfExemption;
+import com.haritonov.school.docflow.modules.certificate.dto.ExemptionOrderFilterDto;
 import io.micrometer.common.util.StringUtils;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -13,9 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-public interface CertificateRepository extends JpaRepository<CertificateOfStudy, Long>, JpaSpecificationExecutor<CertificateOfStudy> {
+public interface ExemptionOrderRepository extends JpaRepository<OrderOfExemption, Long>, JpaSpecificationExecutor<OrderOfExemption> {
 
-    static Specification<CertificateOfStudy> withFilter(CertificateFilterDto filter) {
+    static Specification<OrderOfExemption> withFilter(ExemptionOrderFilterDto filter) {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
 
