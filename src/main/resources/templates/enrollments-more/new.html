@@ -13,8 +13,16 @@
                 </div>
                 <div class="card-body">
                     <form th:action="@{/enrollments-more/new}" th:object="${enrollmentDto}" method="post" id="enrollmentForm">
+                        <!-- Скрытое поле для номера документа -->
+                        <input type="hidden" th:field="*{documentNumber}">
+
                         <h5 class="mb-3"><i class="bi bi-info-circle"></i> Данные приказа</h5>
                         <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Номер приказа</label>
+                                <input type="text" class="form-control" th:field="*{documentNumber}" readonly>
+                                <small class="text-muted">Номер генерируется автоматически</small>
+                            </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Дата приказа *</label>
                                 <input type="date" class="form-control" th:field="*{documentDate}" required>

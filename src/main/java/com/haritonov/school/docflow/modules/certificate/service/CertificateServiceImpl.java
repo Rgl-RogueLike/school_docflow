@@ -5,6 +5,7 @@ import com.haritonov.school.docflow.modules.certificate.dto.CertificateFilterDto
 import com.haritonov.school.docflow.modules.certificate.dto.CertificateResponse;
 import com.haritonov.school.docflow.modules.certificate.dto.CertificateUpdateRequest;
 import com.haritonov.school.docflow.modules.certificate.model.CertificateOfStudy;
+import com.haritonov.school.docflow.modules.certificate.model.enums.CertificateStatus;
 import com.haritonov.school.docflow.modules.certificate.repository.CertificateRepository;
 import com.haritonov.school.docflow.modules.employee.model.Employee;
 import com.haritonov.school.docflow.modules.employee.repository.EmployeeRepository;
@@ -14,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,6 +36,7 @@ public class CertificateServiceImpl implements CertificateService {
         response.setPurpose(entity.getPurpose());
         response.setDateFrom(entity.getDateFrom());
         response.setIssueDate(entity.getIssueDate());
+        response.setStatus(calculateStatus(entity));
         if (entity.getStudent() != null) {
             Student student = entity.getStudent();
             response.setStudentId(student.getId());
@@ -46,6 +50,26 @@ public class CertificateServiceImpl implements CertificateService {
                     (employee.getPatronymic() != null ? " " + employee.getPatronymic() : " "));
         }
         return response;
+    }
+
+    private CertificateStatus calculateStatus(CertificateOfStudy certificate) {
+        LocalDate now = LocalDate.now();
+        LocalDate start = certificate.getDateFrom();
+        LocalDate end = certificate.getIssueDate();
+
+        if (start == null || end == null) {
+            return CertificateStatus.EXPIRED; // или неизвестно
+        }
+
+        if (now.isBefore(start)) {
+            return CertificateStatus.NOT_STARTED;
+        } else if (now.isAfter(end)) {
+            return CertificateStatus.EXPIRED;
+        } else if (ChronoUnit.DAYS.between(now, end) <= 3) {
+            return CertificateStatus.EXPIRING_SOON;
+        } else {
+            return CertificateStatus.ACTIVE;
+        }
     }
 
     @Override
