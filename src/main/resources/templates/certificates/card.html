@@ -8,9 +8,18 @@
     <div class="d-flex justify-content-between mb-4">
         <h2>Справка об освобождении</h2>
         <div>
-            <a href="/certificates" class="btn btn-outline-secondary">← К списку</a>
-            <a th:href="@{/certificates/{id}/edit(id=${certificate.id})}" class="btn btn-primary">Редактировать</a>
-            <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">Удалить</button>
+            <a href="/certificates" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> К списку
+            </a>
+            <button onclick="window.print()" class="btn btn-outline-info">
+                <i class="bi bi-printer"></i> Печать
+            </button>
+            <a th:href="@{/certificates/{id}/edit(id=${certificate.id})}" class="btn btn-primary">
+                <i class="bi bi-pencil"></i> Редактировать
+            </a>
+            <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                <i class="bi bi-trash"></i> Удалить
+            </button>
         </div>
     </div>
 
