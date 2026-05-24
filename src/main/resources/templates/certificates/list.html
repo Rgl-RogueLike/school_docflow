@@ -90,6 +90,11 @@
                     <td th:text="${c.studentFullName}">Иванов Иван</td>
                     <td th:text="${c.creatorFullName}">Петрова Мария</td>
                     <td th:text="${#temporals.format(c.dateFrom, 'dd.MM.yyyy')} + ' - ' + ${#temporals.format(c.issueDate, 'dd.MM.yyyy')}"></td>
+                    <th>Статус</th>
+                    ...
+                    <td>
+                        <span class="badge" th:classappend="'bg-' + ${c.status.badgeClass}" th:text="${c.status.description}"></span>
+                    </td>
                     <td>
                         <a th:href="@{/certificates/{id}(id=${c.id})}" class="btn btn-sm btn-info">
                             <i class="bi bi-eye"></i> Карточка
