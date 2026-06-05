@@ -1,55 +1,52 @@
 <!DOCTYPE html>
 <html th:replace="~{layout :: layout}" lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Новый приказ о перемещении</title>
+    <title>Новый приказ о временном выбытии</title>
 </head>
 <body>
 <div th:fragment="content">
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <div class="card">
-                <div class="card-header bg-success text-white">Создание приказа о временном перемещении</div>
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <i class="bi bi-file-text"></i> Создание приказа о временном выбытии
+                </div>
                 <div class="card-body">
                     <form th:action="@{/dislocations/new}" th:object="${dislocationDto}" method="post">
-                        <div class="col-md-6 mb-3">
+                        <div class="mb-3">
                             <label class="form-label">Номер приказа</label>
                             <input type="text" class="form-control" th:field="*{documentNumber}" readonly>
                             <small class="text-muted">Номер генерируется автоматически</small>
                         </div>
                         <div class="mb-3">
-                            <label>Дата приказа</label>
+                            <label class="form-label">Дата приказа</label>
                             <input type="date" class="form-control" th:field="*{documentDate}" required>
                         </div>
                         <div class="mb-3">
-                            <label>Ученик</label>
+                            <label class="form-label">Ученик</label>
                             <select class="form-select" th:field="*{studentId}" required>
                                 <option value="">-- выберите --</option>
                                 <option th:each="s : ${students}" th:value="${s.id}" th:text="${s.fullName}"></option>
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label>В отношении</label>
-                            <input type="text" class="form-control" th:field="*{relation}" placeholder="например, перевода в другой класс">
+                            <label class="form-label">Основание</label>
+                            <textarea class="form-control" th:field="*{basis}" rows="3" required></textarea>
                         </div>
                         <div class="mb-3">
-                            <label>Основание</label>
-                            <textarea class="form-control" th:field="*{basis}" rows="2"></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label>Дата начала действия</label>
-                            <input type="date" class="form-control" th:field="*{dateFrom}" required>
-                        </div>
-                        <div class="mb-3">
-                            <label>Дата начала перемещения</label>
+                            <label class="form-label">Дата начала выбытия</label>
                             <input type="date" class="form-control" th:field="*{effectiveStartDate}" required>
                         </div>
                         <div class="mb-3">
-                            <label>Дата окончания перемещения</label>
+                            <label class="form-label">Дата окончания выбытия</label>
                             <input type="date" class="form-control" th:field="*{effectiveEndDate}" required>
                         </div>
-                        <div class="d-flex justify-content-between">
+
+                        <div class="d-flex justify-content-between mt-4">
                             <a href="/dislocations" class="btn btn-secondary">Отмена</a>
-                            <button type="submit" class="btn btn-success">Сохранить</button>
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-save"></i> Сохранить
+                            </button>
                         </div>
                     </form>
                 </div>

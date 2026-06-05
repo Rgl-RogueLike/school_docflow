@@ -1,12 +1,12 @@
-package com.haritonov.school.docflow.modules.certificate.service;
+package com.haritonov.school.docflow.modules.exemption.service;
 
-import com.haritonov.school.docflow.modules.certificate.dto.ExemptionOrderCreateRequest;
-import com.haritonov.school.docflow.modules.certificate.dto.ExemptionOrderFilterDto;
-import com.haritonov.school.docflow.modules.certificate.dto.ExemptionOrderResponse;
-import com.haritonov.school.docflow.modules.certificate.dto.ExemptionOrderUpdateRequest;
-import com.haritonov.school.docflow.modules.certificate.model.OrderOfExemption;
-import com.haritonov.school.docflow.modules.certificate.model.enums.ExemptionOrderStatus;
-import com.haritonov.school.docflow.modules.certificate.repository.ExemptionOrderRepository;
+import com.haritonov.school.docflow.modules.exemption.dto.ExemptionOrderCreateRequest;
+import com.haritonov.school.docflow.modules.exemption.dto.ExemptionOrderFilterDto;
+import com.haritonov.school.docflow.modules.exemption.dto.ExemptionOrderResponse;
+import com.haritonov.school.docflow.modules.exemption.dto.ExemptionOrderUpdateRequest;
+import com.haritonov.school.docflow.modules.exemption.model.ExemptionOrder;
+import com.haritonov.school.docflow.modules.exemption.model.enums.ExemptionOrderStatus;
+import com.haritonov.school.docflow.modules.exemption.repository.ExemptionOrderRepository;
 import com.haritonov.school.docflow.modules.employee.model.Employee;
 import com.haritonov.school.docflow.modules.employee.repository.EmployeeRepository;
 import com.haritonov.school.docflow.modules.student.model.Student;
@@ -24,11 +24,11 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ExemptionOrderServiceImpl implements ExemptionOrderService {
 
-    private final ExemptionOrderRepository certificateRepository;
+    private final ExemptionOrderRepository exemptionRepository;
     private final StudentRepository studentRepository;
     private final EmployeeRepository employeeRepository;
 
-    private ExemptionOrderResponse mapToResponse(OrderOfExemption entity) {
+    private ExemptionOrderResponse mapToResponse(ExemptionOrder entity) {
         ExemptionOrderResponse response = new ExemptionOrderResponse();
         response.setId(entity.getId());
         response.setDocumentNumber(entity.getDocumentNumber());
@@ -42,6 +42,10 @@ public class ExemptionOrderServiceImpl implements ExemptionOrderService {
             response.setStudentId(student.getId());
             response.setStudentFullName(student.getLastName() + " " + student.getFirstName() +
                     (student.getPatronymic() != null ? " " + student.getPatronymic() : " "));
+            response.setStudentDateOfBirth(student.getDateOfBirth());
+            if (student.getEducationalClass() != null) {
+                response.setStudentClassName(student.getEducationalClass().getName());
+            }
         }
 
         if (entity.getCreatedAt() != null) {
@@ -52,7 +56,7 @@ public class ExemptionOrderServiceImpl implements ExemptionOrderService {
         return response;
     }
 
-    private ExemptionOrderStatus calculateStatus(OrderOfExemption certificate) {
+    private ExemptionOrderStatus calculateStatus(ExemptionOrder certificate) {
         LocalDate now = LocalDate.now();
         LocalDate start = certificate.getDateFrom();
         LocalDate end = certificate.getIssueDate();
@@ -79,7 +83,7 @@ public class ExemptionOrderServiceImpl implements ExemptionOrderService {
                 .orElseThrow(() -> new IllegalArgumentException("Ученик не найден"));
         Employee employee = employeeRepository.findById(request.getCreatorId())
                 .orElseThrow(() -> new IllegalArgumentException("Сотрудник не найден"));
-        OrderOfExemption certificate = new OrderOfExemption();
+        ExemptionOrder certificate = new ExemptionOrder();
         certificate.setDocumentNumber(request.getDocumentNumber());
         certificate.setDocumentDate(request.getDocumentDate().atStartOfDay());
         certificate.setPurpose(request.getPurpose());
@@ -87,14 +91,14 @@ public class ExemptionOrderServiceImpl implements ExemptionOrderService {
         certificate.setIssueDate(request.getIssueDate());
         certificate.setStudent(student);
         certificate.setCreator(employee);
-        OrderOfExemption savedCertificate = certificateRepository.save(certificate);
+        ExemptionOrder savedCertificate = exemptionRepository.save(certificate);
         return savedCertificate.getId();
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<ExemptionOrderResponse> getAll() {
-        List<OrderOfExemption> certificates = certificateRepository.findAll();
+        List<ExemptionOrder> certificates = exemptionRepository.findAll();
         return certificates.stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
@@ -103,7 +107,7 @@ public class ExemptionOrderServiceImpl implements ExemptionOrderService {
     @Override
     @Transactional(readOnly = true)
     public ExemptionOrderResponse getById(Long id) {
-        OrderOfExemption certificate = certificateRepository.findById(id)
+        ExemptionOrder certificate = exemptionRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Справка не найдена"));
         return mapToResponse(certificate);
     }
@@ -111,7 +115,7 @@ public class ExemptionOrderServiceImpl implements ExemptionOrderService {
     @Override
     @Transactional
     public void update(ExemptionOrderUpdateRequest request) {
-        OrderOfExemption certificate = certificateRepository.findById(request.getId())
+        ExemptionOrder certificate = exemptionRepository.findById(request.getId())
                 .orElseThrow(() -> new IllegalArgumentException("Справка не найдена"));
         Student student = studentRepository.findById(request.getStudentId())
                 .orElseThrow(() -> new IllegalArgumentException("Ученик не найден"));
@@ -121,22 +125,22 @@ public class ExemptionOrderServiceImpl implements ExemptionOrderService {
         certificate.setDateFrom(request.getDateFrom());
         certificate.setIssueDate(request.getIssueDate());
         certificate.setStudent(student);
-        certificateRepository.save(certificate);
+        exemptionRepository.save(certificate);
     }
 
     @Override
     @Transactional
     public void delete(Long id) {
-        if(!certificateRepository.existsById(id)) {
+        if(!exemptionRepository.existsById(id)) {
             throw new IllegalArgumentException("Справка не найдена");
         }
-        certificateRepository.deleteById(id);
+        exemptionRepository.deleteById(id);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<ExemptionOrderResponse> getAllWithFilter(ExemptionOrderFilterDto filter) {
-        List<OrderOfExemption> certificates = certificateRepository.findAll(ExemptionOrderRepository.withFilter(filter));
+        List<ExemptionOrder> certificates = exemptionRepository.findAll(ExemptionOrderRepository.withFilter(filter));
         return certificates.stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());

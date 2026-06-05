@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html th:replace="~{layout :: layout}" lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Приказ об освобождении #[[${certificate.id}]]</title>
+    <title>Приказ об освобождении #[[${exemptionOrder.id}]]</title>
     <style>
         @media print {
             .btn, .navbar, .modal, .no-print {
@@ -26,10 +26,10 @@
             <a href="/exemption-orders" class="btn btn-outline-secondary">
                 <i class="bi bi-arrow-left"></i> К списку
             </a>
-            <button onclick="window.print()" class="btn btn-outline-info">
+            <a th:href="@{/exemption-orders/{id}/download(id=${exemptionOrder.id})}" class="btn btn-outline-info">
                 <i class="bi bi-printer"></i> Печать
-            </button>
-            <a th:href="@{/exemption-orders/{id}/edit(id=${certificate.id})}" class="btn btn-primary">
+            </a>
+            <a th:href="@{/exemption-orders/{id}/edit(id=${exemptionOrder.id})}" class="btn btn-primary">
                 <i class="bi bi-pencil"></i> Редактировать
             </a>
             <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
@@ -41,13 +41,20 @@
     <div class="card">
         <div class="card-body">
             <dl class="row">
-                <dt class="col-sm-3">Номер приказа</dt><dd class="col-sm-9">[[${certificate.documentNumber}]]</dd>
-                <dt class="col-sm-3">Дата приказа</dt><dd class="col-sm-9">[[${#temporals.format(certificate.documentDate, 'dd.MM.yyyy HH:mm')}]]</dd>
-                <dt class="col-sm-3">Ученик</dt><dd class="col-sm-9">[[${certificate.studentFullName}]]</dd>
-                <dt class="col-sm-3">Основание</dt><dd class="col-sm-9">[[${certificate.purpose}]]</dd>
-                <dt class="col-sm-3">Дата начала</dt><dd class="col-sm-9">[[${#temporals.format(certificate.dateFrom, 'dd.MM.yyyy')}]]</dd>
-                <dt class="col-sm-3">Дата окончания</dt><dd class="col-sm-9">[[${#temporals.format(certificate.issueDate, 'dd.MM.yyyy')}]]</dd>
-                <dt class="col-sm-3">Создатель</dt><dd class="col-sm-9">[[${certificate.creatorFullName}]]</dd>
+                <dt class="col-sm-3">Номер приказа</dt>
+                <dd class="col-sm-9">[[${exemptionOrder.documentNumber}]]</dd>
+                <dt class="col-sm-3">Дата приказа</dt>
+                <dd class="col-sm-9">[[${#temporals.format(exemptionOrder.documentDate, 'dd.MM.yyyy HH:mm')}]]</dd>
+                <dt class="col-sm-3">Ученик</dt>
+                <dd class="col-sm-9">[[${exemptionOrder.studentFullName}]]</dd>
+                <dt class="col-sm-3">Основание</dt>
+                <dd class="col-sm-9">[[${exemptionOrder.purpose}]]</dd>
+                <dt class="col-sm-3">Дата начала</dt>
+                <dd class="col-sm-9">[[${#temporals.format(exemptionOrder.dateFrom, 'dd.MM.yyyy')}]]</dd>
+                <dt class="col-sm-3">Дата окончания</dt>
+                <dd class="col-sm-9">[[${#temporals.format(exemptionOrder.issueDate, 'dd.MM.yyyy')}]]</dd>
+                <dt class="col-sm-3">Создатель</dt>
+                <dd class="col-sm-9">[[${exemptionOrder.creatorFullName}]]</dd>
             </dl>
         </div>
     </div>
@@ -55,10 +62,10 @@
     <div class="modal fade" id="deleteModal" tabindex="-1">
         <div class="modal-dialog"><div class="modal-content">
             <div class="modal-header"><h5>Подтверждение</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-            <div class="modal-body">Удалить приказ об освобождении № [[${certificate.documentNumber}]]?</div>
+            <div class="modal-body">Удалить приказ об освобождении № [[${exemptionOrder.documentNumber}]]?</div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
-                <form th:action="@{/exemption-orders/{id}/delete(id=${certificate.id})}" method="post">
+                <form th:action="@{/exemption-orders/{id}/delete(id=${exemptionOrder.id})}" method="post">
                     <button type="submit" class="btn btn-danger">Удалить</button>
                 </form>
             </div>

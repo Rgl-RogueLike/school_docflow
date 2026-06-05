@@ -18,4 +18,6 @@ public class DislocationResponse {
     private String studentFullName;
     private Long studentId;
     private String creatorFullName;
+    private LocalDate studentDateOfBirth;
+    private String studentClassName;
 }

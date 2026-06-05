@@ -1,4 +1,4 @@
-package com.haritonov.school.docflow.modules.certificate.model.enums;
+package com.haritonov.school.docflow.modules.exemption.model.enums;
 
 public enum ExemptionOrderStatus {
     NOT_STARTED("Не началась", "secondary"),

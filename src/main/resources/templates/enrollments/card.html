@@ -11,9 +11,9 @@
             <a href="/enrollments" class="btn btn-outline-secondary">
                 <i class="bi bi-arrow-left"></i> К списку
             </a>
-            <button onclick="window.print()" class="btn btn-outline-info">
+            <a th:href="@{/enrollments/{id}/download(id=${enrollment.id})}" class="btn btn-outline-info">
                 <i class="bi bi-printer"></i> Печать
-            </button>
+            </a>
             <a th:href="@{/enrollments/{id}/edit(id=${enrollment.id})}" class="btn btn-primary">
                 <i class="bi bi-pencil"></i> Редактировать
             </a>

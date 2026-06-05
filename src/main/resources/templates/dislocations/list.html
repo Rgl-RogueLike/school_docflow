@@ -2,7 +2,7 @@
 <html th:replace="~{layout :: layout}" lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>Приказы о временном перемещении</title>
+  <title>Приказы о временном выбытии</title>
 </head>
 <body>
 <div th:fragment="content">
@@ -16,12 +16,13 @@
   </div>
 
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2>Приказы о временном перемещении</h2>
+    <h2>Приказы о временном выбытии</h2>
     <a href="/dislocations/new" class="btn btn-success">
       <i class="bi bi-plus-lg"></i> Новый приказ
     </a>
   </div>
 
+  <!-- Форма фильтрации -->
   <div class="card mb-3">
     <div class="card-body">
       <form th:action="@{/dislocations}" th:object="${filter}" method="get" class="row g-3">
@@ -46,19 +47,19 @@
           <input type="date" class="form-control" th:field="*{dateTo}">
         </div>
         <div class="col-md-2">
-          <label class="form-label">Начало перемещения от</label>
+          <label class="form-label">Дата начала выбытия от</label>
           <input type="date" class="form-control" th:field="*{effectiveStartDateFrom}">
         </div>
         <div class="col-md-2">
-          <label class="form-label">Начало перемещения до</label>
+          <label class="form-label">Дата начала выбытия до</label>
           <input type="date" class="form-control" th:field="*{effectiveStartDateTo}">
         </div>
         <div class="col-md-2">
-          <label class="form-label">Окончание перемещения от</label>
+          <label class="form-label">Дата окончания выбытия от</label>
           <input type="date" class="form-control" th:field="*{effectiveEndDateFrom}">
         </div>
         <div class="col-md-2">
-          <label class="form-label">Окончание перемещения до</label>
+          <label class="form-label">Дата окончания выбытия до</label>
           <input type="date" class="form-control" th:field="*{effectiveEndDateTo}">
         </div>
         <div class="col-md-2 d-flex align-items-end">
@@ -82,7 +83,7 @@
 
   <div class="card shadow" th:unless="${dislocations.empty}">
     <div class="card-header bg-light">
-      <i class="bi bi-list-check"></i> Список приказов
+      <i class="bi bi-list-check"></i> Список приказов о временном выбытии
     </div>
     <div class="card-body">
       <table class="table table-hover">
@@ -92,7 +93,8 @@
           <th>Номер</th>
           <th>Дата приказа</th>
           <th>Ученик</th>
-          <th>Период перемещения</th>
+          <th>Класс</th>
+          <th>Период выбытия</th>
           <th>Создатель</th>
           <th>Действия</th>
         </tr>
@@ -103,6 +105,7 @@
           <td th:text="${d.documentNumber}">Пр-Пер-1-25</td>
           <td th:text="${#temporals.format(d.documentDate, 'dd.MM.yyyy')}">...</td>
           <td th:text="${d.studentFullName}">Иванов Иван</td>
+          <td th:text="${d.studentClassName}">10А</td>
           <td th:text="${#temporals.format(d.effectiveStartDate, 'dd.MM.yyyy')} + ' - ' + ${#temporals.format(d.effectiveEndDate, 'dd.MM.yyyy')}"></td>
           <td th:text="${d.creatorFullName}">Петрова Мария</td>
           <td>

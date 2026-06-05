@@ -7,10 +7,15 @@ import com.haritonov.school.docflow.modules.dislocation.dto.DislocationUpdateReq
 import com.haritonov.school.docflow.modules.dislocation.service.DislocationService;
 import com.haritonov.school.docflow.modules.document.model.enums.DocumentPrefix;
 import com.haritonov.school.docflow.modules.document.service.DocumentNumberGeneratedService;
+import com.haritonov.school.docflow.modules.printdocuments.service.DocumentTemplateService;
 import com.haritonov.school.docflow.modules.student.service.StudentService;
 import com.haritonov.school.docflow.modules.user.service.CurrentUserService;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +32,7 @@ public class DislocationController {
     private final StudentService studentService;
     private final CurrentUserService currentUserService;
     private final DocumentNumberGeneratedService documentNumberGeneratedService;
+    private final DocumentTemplateService documentTemplateService;
 
     @GetMapping
     public String listDislocations(@ModelAttribute DislocationFilterDto filter, Model model) {
@@ -65,14 +71,13 @@ public class DislocationController {
     public String createDislocation(@ModelAttribute("dislocationDto") DislocationCreateRequest request,
                                     RedirectAttributes redirectAttributes) {
         try {
-            // TODO: взять реальный ID текущего сотрудника (например, из SecurityContext)
-            Long currentEmployeeId = 1L;
-            request.setCreatorId(currentEmployeeId);
+            request.setCreatorId(currentUserService.getCurrentEmployeeId()); // ← ЭТА СТРОКА
             Long id = dislocationService.create(request);
-            redirectAttributes.addFlashAttribute("success", "Приказ о перемещении успешно создан");
+            redirectAttributes.addFlashAttribute("success", "Приказ создан");
             return "redirect:/dislocations/" + id;
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Ошибка создания приказа: " + e.getMessage());
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("error", "Ошибка: " + e.getMessage());
             return "redirect:/dislocations/new";
         }
     }
@@ -129,4 +134,20 @@ public class DislocationController {
         }
         return "redirect:/dislocations";
     }
+
+    @GetMapping("/{id}/download")
+    public ResponseEntity<byte[]> downloadDislocation(@PathVariable Long id) {
+        try {
+            DislocationResponse dislocation = dislocationService.getById(id);
+            byte[] document = documentTemplateService.generateDislocationOrder(dislocation);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            headers.setContentDispositionFormData("attachment", "prikaz_vremennoe_vybytie_" + id + ".docx");
+            return new ResponseEntity<>(document, headers, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
 }

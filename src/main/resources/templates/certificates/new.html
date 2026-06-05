@@ -1,50 +1,44 @@
 <!DOCTYPE html>
 <html th:replace="~{layout :: layout}" lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Новый приказ об освобождении</title>
+    <title>Новая справка об обучении</title>
 </head>
 <body>
 <div th:fragment="content">
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <div class="card">
+            <div class="card shadow">
                 <div class="card-header bg-success text-white">
-                    Создание приказа об освобождении
+                    <i class="bi bi-file-text"></i> Создание справки об обучении
                 </div>
                 <div class="card-body">
-                    <form th:action="@{/exemption-orders/new}" th:object="${exemptionDto}" method="post">
+                    <form th:action="@{/certificates/new}" th:object="${certificateDto}" method="post">
                         <div class="mb-3">
-                            <label class="form-label">Номер приказа</label>
+                            <label class="form-label">Номер справки</label>
                             <input type="text" class="form-control" th:field="*{documentNumber}" readonly>
                             <small class="text-muted">Номер генерируется автоматически</small>
                         </div>
                         <div class="mb-3">
-                            <label>Дата приказа</label>
+                            <label class="form-label">Дата справки</label>
                             <input type="date" class="form-control" th:field="*{documentDate}" required>
                         </div>
                         <div class="mb-3">
-                            <label>Ученик</label>
+                            <label class="form-label">Ученик</label>
                             <select class="form-select" th:field="*{studentId}" required>
                                 <option value="">-- выберите --</option>
                                 <option th:each="s : ${students}" th:value="${s.id}" th:text="${s.fullName}"></option>
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label>Основание</label>
-                            <textarea class="form-control" th:field="*{purpose}" rows="2"></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label>Дата начала</label>
-                            <input type="date" class="form-control" th:field="*{dateFrom}" required>
-                        </div>
-                        <div class="mb-3">
-                            <label>Дата окончания</label>
-                            <input type="date" class="form-control" th:field="*{issueDate}" required>
+                            <label class="form-label">Учебный год</label>
+                            <input type="text" class="form-control" th:field="*{academicYear}" required placeholder="например 2025-2026">
                         </div>
 
-                        <div class="d-flex justify-content-between">
-                            <a href="/exemption-orders" class="btn btn-secondary">Отмена</a>
-                            <button type="submit" class="btn btn-success">Сохранить</button>
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="/certificates" class="btn btn-secondary">Отмена</a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-save"></i> Сохранить
+                            </button>
                         </div>
                     </form>
                 </div>
