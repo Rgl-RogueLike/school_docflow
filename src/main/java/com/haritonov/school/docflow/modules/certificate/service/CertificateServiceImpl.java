@@ -1,11 +1,7 @@
 package com.haritonov.school.docflow.modules.certificate.service;
 
-import com.haritonov.school.docflow.modules.certificate.dto.CertificateCreateRequest;
-import com.haritonov.school.docflow.modules.certificate.dto.CertificateFilterDto;
-import com.haritonov.school.docflow.modules.certificate.dto.CertificateResponse;
-import com.haritonov.school.docflow.modules.certificate.dto.CertificateUpdateRequest;
-import com.haritonov.school.docflow.modules.certificate.model.CertificateOfStudy;
-import com.haritonov.school.docflow.modules.certificate.model.enums.CertificateStatus;
+import com.haritonov.school.docflow.modules.certificate.dto.*;
+import com.haritonov.school.docflow.modules.certificate.model.Certificate;
 import com.haritonov.school.docflow.modules.certificate.repository.CertificateRepository;
 import com.haritonov.school.docflow.modules.employee.model.Employee;
 import com.haritonov.school.docflow.modules.employee.repository.EmployeeRepository;
@@ -15,8 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,48 +22,28 @@ public class CertificateServiceImpl implements CertificateService {
     private final StudentRepository studentRepository;
     private final EmployeeRepository employeeRepository;
 
-    private CertificateResponse mapToResponse(CertificateOfStudy entity) {
+    private CertificateResponse mapToResponse(Certificate entity) {
         CertificateResponse response = new CertificateResponse();
         response.setId(entity.getId());
         response.setDocumentNumber(entity.getDocumentNumber());
         response.setDocumentDate(entity.getDocumentDate());
-        response.setPurpose(entity.getPurpose());
-        response.setDateFrom(entity.getDateFrom());
-        response.setIssueDate(entity.getIssueDate());
-        response.setStatus(calculateStatus(entity));
+        response.setAcademicYear(entity.getAcademicYear());
         if (entity.getStudent() != null) {
             Student student = entity.getStudent();
             response.setStudentId(student.getId());
             response.setStudentFullName(student.getLastName() + " " + student.getFirstName() +
-                    (student.getPatronymic() != null ? " " + student.getPatronymic() : " "));
+                    (student.getPatronymic() != null ? " " + student.getPatronymic() : ""));
+            response.setStudentDateOfBirth(student.getDateOfBirth());
+            if (student.getEducationalClass() != null) {
+                response.setStudentClassName(student.getEducationalClass().getName());
+            }
         }
-
-        if (entity.getCreatedAt() != null) {
-            Employee employee = entity.getCreator();
-            response.setCreatorFullName(employee.getLastName() + " " + employee.getFirstName() +
-                    (employee.getPatronymic() != null ? " " + employee.getPatronymic() : " "));
+        if (entity.getCreator() != null) {
+            Employee creator = entity.getCreator();
+            response.setCreatorFullName(creator.getLastName() + " " + creator.getFirstName() +
+                    (creator.getPatronymic() != null ? " " + creator.getPatronymic() : ""));
         }
         return response;
-    }
-
-    private CertificateStatus calculateStatus(CertificateOfStudy certificate) {
-        LocalDate now = LocalDate.now();
-        LocalDate start = certificate.getDateFrom();
-        LocalDate end = certificate.getIssueDate();
-
-        if (start == null || end == null) {
-            return CertificateStatus.EXPIRED; // или неизвестно
-        }
-
-        if (now.isBefore(start)) {
-            return CertificateStatus.NOT_STARTED;
-        } else if (now.isAfter(end)) {
-            return CertificateStatus.EXPIRED;
-        } else if (ChronoUnit.DAYS.between(now, end) <= 3) {
-            return CertificateStatus.EXPIRING_SOON;
-        } else {
-            return CertificateStatus.ACTIVE;
-        }
     }
 
     @Override
@@ -79,23 +53,20 @@ public class CertificateServiceImpl implements CertificateService {
                 .orElseThrow(() -> new IllegalArgumentException("Ученик не найден"));
         Employee employee = employeeRepository.findById(request.getCreatorId())
                 .orElseThrow(() -> new IllegalArgumentException("Сотрудник не найден"));
-        CertificateOfStudy certificate = new CertificateOfStudy();
-        certificate.setDocumentNumber(request.getDocumentNumber());
-        certificate.setDocumentDate(request.getDocumentDate().atStartOfDay());
-        certificate.setPurpose(request.getPurpose());
-        certificate.setDateFrom(request.getDateFrom());
-        certificate.setIssueDate(request.getIssueDate());
-        certificate.setStudent(student);
-        certificate.setCreator(employee);
-        CertificateOfStudy savedCertificate = certificateRepository.save(certificate);
-        return savedCertificate.getId();
+        Certificate cert = new Certificate();
+        cert.setDocumentNumber(request.getDocumentNumber());
+        cert.setDocumentDate(request.getDocumentDate().atStartOfDay());
+        cert.setAcademicYear(request.getAcademicYear());
+        cert.setStudent(student);
+        cert.setCreator(employee);
+        Certificate saved = certificateRepository.save(cert);
+        return saved.getId();
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<CertificateResponse> getAll() {
-        List<CertificateOfStudy> certificates = certificateRepository.findAll();
-        return certificates.stream()
+        return certificateRepository.findAll().stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
     }
@@ -103,31 +74,29 @@ public class CertificateServiceImpl implements CertificateService {
     @Override
     @Transactional(readOnly = true)
     public CertificateResponse getById(Long id) {
-        CertificateOfStudy certificate = certificateRepository.findById(id)
+        Certificate cert = certificateRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Справка не найдена"));
-        return mapToResponse(certificate);
+        return mapToResponse(cert);
     }
 
     @Override
     @Transactional
     public void update(CertificateUpdateRequest request) {
-        CertificateOfStudy certificate = certificateRepository.findById(request.getId())
+        Certificate cert = certificateRepository.findById(request.getId())
                 .orElseThrow(() -> new IllegalArgumentException("Справка не найдена"));
         Student student = studentRepository.findById(request.getStudentId())
                 .orElseThrow(() -> new IllegalArgumentException("Ученик не найден"));
-        certificate.setDocumentNumber(request.getDocumentNumber());
-        certificate.setDocumentDate(request.getDocumentDate().atStartOfDay());
-        certificate.setPurpose(request.getPurpose());
-        certificate.setDateFrom(request.getDateFrom());
-        certificate.setIssueDate(request.getIssueDate());
-        certificate.setStudent(student);
-        certificateRepository.save(certificate);
+        cert.setDocumentNumber(request.getDocumentNumber());
+        cert.setDocumentDate(request.getDocumentDate().atStartOfDay());
+        cert.setAcademicYear(request.getAcademicYear());
+        cert.setStudent(student);
+        certificateRepository.save(cert);
     }
 
     @Override
     @Transactional
     public void delete(Long id) {
-        if(!certificateRepository.existsById(id)) {
+        if (!certificateRepository.existsById(id)) {
             throw new IllegalArgumentException("Справка не найдена");
         }
         certificateRepository.deleteById(id);
@@ -136,9 +105,7 @@ public class CertificateServiceImpl implements CertificateService {
     @Override
     @Transactional(readOnly = true)
     public List<CertificateResponse> getAllWithFilter(CertificateFilterDto filter) {
-        List<CertificateOfStudy> certificates = certificateRepository.findAll(CertificateRepository.withFilter(filter));
-        return certificates.stream()
-                .map(this::mapToResponse)
-                .collect(Collectors.toList());
+        List<Certificate> certificates = certificateRepository.findAll(CertificateRepository.withFilter(filter));
+        return certificates.stream().map(this::mapToResponse).collect(Collectors.toList());
     }
 }

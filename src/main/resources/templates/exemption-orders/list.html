@@ -2,7 +2,7 @@
 <html th:replace="~{layout :: layout}" lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Справки об обучении</title>
+    <title>Приказы об освобождении</title>
 </head>
 <body>
 <div th:fragment="content">
@@ -16,27 +16,22 @@
     </div>
 
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>Справки об обучении</h2>
-        <a href="/certificates/new" class="btn btn-success">
-            <i class="bi bi-plus-lg"></i> Новая справка
+        <h2>Приказы об освобождении</h2>
+        <a href="/exemption-orders/new" class="btn btn-success">
+            <i class="bi bi-plus-lg"></i> Новый приказ
         </a>
     </div>
 
-    <!-- Форма фильтрации -->
     <div class="card mb-3">
         <div class="card-body">
-            <form th:action="@{/certificates}" th:object="${filter}" method="get" class="row g-3">
+            <form th:action="@{/exemption-orders}" th:object="${filter}" method="get" class="row g-3">
                 <div class="col-md-3">
-                    <label class="form-label">Номер справки</label>
+                    <label class="form-label">Номер приказа</label>
                     <input type="text" class="form-control" th:field="*{documentNumber}" placeholder="Поиск по номеру">
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Ученик</label>
                     <input type="text" class="form-control" th:field="*{studentName}" placeholder="ФИО ученика">
-                </div>
-                <div class="col-md-3">
-                    <label class="form-label">Класс</label>
-                    <input type="text" class="form-control" th:field="*{className}" placeholder="Название класса">
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Создатель</label>
@@ -55,7 +50,7 @@
                         <button type="submit" class="btn btn-primary">
                             <i class="bi bi-search"></i> Применить
                         </button>
-                        <a href="/certificates" class="btn btn-secondary">
+                        <a href="/exemption-orders" class="btn btn-secondary">
                             <i class="bi bi-x-circle"></i> Сбросить
                         </a>
                     </div>
@@ -64,14 +59,14 @@
         </div>
     </div>
 
-    <div th:if="${certificates.empty}" class="alert alert-info">
-        <i class="bi bi-info-circle"></i> Нет справок, соответствующих критериям поиска.
-        <a href="/certificates/new" class="alert-link">Создать первую справку</a>
+    <div th:if="${exemptionOrders.empty}" class="alert alert-info">
+        <i class="bi bi-info-circle"></i> Нет приказов, соответствующих критериям поиска.
+        <a href="/exemption-orders/new" class="alert-link">Создать первый приказ</a>
     </div>
 
-    <div class="card shadow" th:unless="${certificates.empty}">
+    <div class="card shadow" th:unless="${exemptionOrders.empty}">
         <div class="card-header bg-light">
-            <i class="bi bi-list-check"></i> Список справок об обучении
+            <i class="bi bi-list-check"></i> Список приказов об освобождении
         </div>
         <div class="card-body">
             <table class="table table-hover">
@@ -81,23 +76,25 @@
                     <th>Номер</th>
                     <th>Дата</th>
                     <th>Ученик</th>
-                    <th>Класс</th>
-                    <th>Учебный год</th>
                     <th>Создатель</th>
+                    <th>Период освобождения</th>
+                    <th>Статус</th>
                     <th>Действия</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="c : ${certificates}">
-                    <td th:text="${c.id}">1</td>
-                    <td th:text="${c.documentNumber}">Спр-Обуч-1-2026</td>
-                    <td th:text="${#temporals.format(c.documentDate, 'dd.MM.yyyy')}">...</td>
-                    <td th:text="${c.studentFullName}">Иванов Иван</td>
-                    <td th:text="${c.studentClassName}">10А</td>
-                    <td th:text="${c.academicYear}">2025-2026</td>
-                    <td th:text="${c.creatorFullName}">Петрова Мария</td>
+                <tr th:each="e : ${exemptionOrders}">
+                    <td th:text="${e.id}">1</td>
+                    <td th:text="${e.documentNumber}">Пр-Осв-1-2025</td>
+                    <td th:text="${#temporals.format(e.documentDate, 'dd.MM.yyyy')}">...</td>
+                    <td th:text="${e.studentFullName}">Иванов Иван</td>
+                    <td th:text="${e.creatorFullName}">Петрова Мария</td>
+                    <td th:text="${#temporals.format(e.dateFrom, 'dd.MM.yyyy')} + ' - ' + ${#temporals.format(e.issueDate, 'dd.MM.yyyy')}"></td>
                     <td>
-                        <a th:href="@{/certificates/{id}(id=${c.id})}" class="btn btn-sm btn-info">
+                        <span class="badge" th:classappend="'bg-' + ${e.status.badgeClass}" th:text="${e.status.description}"></span>
+                    </td>
+                    <td>
+                        <a th:href="@{/exemption-orders/{id}(id=${e.id})}" class="btn btn-sm btn-info">
                             <i class="bi bi-eye"></i> Карточка
                         </a>
                     </td>

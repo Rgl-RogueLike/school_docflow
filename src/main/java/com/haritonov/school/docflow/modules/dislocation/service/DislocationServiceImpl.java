@@ -35,11 +35,16 @@ public class DislocationServiceImpl implements DislocationService{
         response.setDateFrom(entity.getDateFrom());
         response.setEffectiveStartDate(entity.getEffectiveStartDate());
         response.setEffectiveEndDate(entity.getEffectiveEndDate());
+
         if (entity.getStudent() != null) {
             Student student = entity.getStudent();
             response.setStudentId(student.getId());
             response.setStudentFullName(student.getLastName() + student.getFirstName() +
                     (student.getPatronymic() != null ? student.getPatronymic() : " "));
+            response.setStudentDateOfBirth(student.getDateOfBirth());
+            if (student.getEducationalClass() != null) {
+                response.setStudentClassName(student.getEducationalClass().getName());
+            }
         }
 
         if (entity.getCreator() != null) {
@@ -57,17 +62,19 @@ public class DislocationServiceImpl implements DislocationService{
                 .orElseThrow(() -> new IllegalArgumentException("Ученик не найден"));
         Employee employee = employeeRepository.findById(request.getCreatorId())
                 .orElseThrow(() -> new IllegalArgumentException("Сотрудник не найден"));
+
         OrderOfTemporaryDislocation order = new OrderOfTemporaryDislocation();
         order.setDocumentNumber(request.getDocumentNumber());
         order.setDocumentDate(request.getDocumentDate().atStartOfDay());
-        order.setRelation(request.getRelation());
-        order.setBasis(request.getBasis());
-        order.setDateFrom(request.getDateFrom());
-        order.setEffectiveStartDate(request.getEffectiveEndDate());
+        order.setBasis(request.getBasis());           // basis
+        order.setEffectiveStartDate(request.getEffectiveStartDate());
+        order.setEffectiveEndDate(request.getEffectiveEndDate());
+        order.setDateFrom(request.getEffectiveStartDate());  // ← ДОБАВИТЬ, если поле dateFrom обязательно
         order.setStudent(student);
         order.setCreator(employee);
-        OrderOfTemporaryDislocation savedOrder = dislocationRepository.save(order);
-        return savedOrder.getId();
+
+        OrderOfTemporaryDislocation saved = dislocationRepository.save(order);
+        return saved.getId();
     }
 
     @Override

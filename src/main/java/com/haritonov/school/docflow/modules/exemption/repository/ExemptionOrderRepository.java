@@ -1,7 +1,7 @@
-package com.haritonov.school.docflow.modules.release.repository;
+package com.haritonov.school.docflow.modules.exemption.repository;
 
-import com.haritonov.school.docflow.modules.release.model.OrderOfReleaseStudent;
-import com.haritonov.school.docflow.modules.release.dto.ReleaseFilterDto;
+import com.haritonov.school.docflow.modules.exemption.model.ExemptionOrder;
+import com.haritonov.school.docflow.modules.exemption.dto.ExemptionOrderFilterDto;
 import io.micrometer.common.util.StringUtils;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -13,9 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-public interface ReleaseRepository extends JpaRepository<OrderOfReleaseStudent, Long>, JpaSpecificationExecutor<OrderOfReleaseStudent> {
+public interface ExemptionOrderRepository extends JpaRepository<ExemptionOrder, Long>, JpaSpecificationExecutor<ExemptionOrder> {
 
-    static Specification<OrderOfReleaseStudent> withFilter(ReleaseFilterDto filter) {
+    static Specification<ExemptionOrder> withFilter(ExemptionOrderFilterDto filter) {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
 
@@ -31,32 +31,12 @@ public interface ReleaseRepository extends JpaRepository<OrderOfReleaseStudent, 
                 predicates.add(cb.lessThanOrEqualTo(root.get("documentDate"), filter.getDateTo().atTime(23, 59, 59)));
             }
 
-            if (filter.getReleaseDateFrom() != null) {
-                predicates.add(cb.greaterThanOrEqualTo(root.get("dateOn"), filter.getReleaseDateFrom()));
-            }
-
-            if (filter.getReleaseDateTo() != null) {
-                predicates.add(cb.lessThanOrEqualTo(root.get("dateOn"), filter.getReleaseDateTo()));
-            }
-
-            if (filter.getBasisDocumentDateFrom() != null) {
-                predicates.add(cb.greaterThanOrEqualTo(root.get("basisDocumentDate"), filter.getBasisDocumentDateFrom()));
-            }
-
-            if (filter.getBasisDocumentDateTo() != null) {
-                predicates.add(cb.lessThanOrEqualTo(root.get("basisDocumentDate"), filter.getBasisDocumentDateTo()));
-            }
-
             if (StringUtils.isNotBlank(filter.getStudentName())) {
                 predicates.add(cb.like(
                         cb.concat(cb.concat(root.get("student").get("lastName"), " "),
                                 cb.concat(root.get("student").get("firstName"), " ")),
                         "%" + filter.getStudentName() + "%"
                 ));
-            }
-
-            if (StringUtils.isNotBlank(filter.getClassName())) {
-                predicates.add(cb.like(root.get("student").get("educationalClass").get("name"), "%" + filter.getClassName() + "%"));
             }
 
             if (StringUtils.isNotBlank(filter.getCreatorName())) {

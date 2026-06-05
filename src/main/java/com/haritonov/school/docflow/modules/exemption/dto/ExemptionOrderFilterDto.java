@@ -1,17 +1,19 @@
-package com.haritonov.school.docflow.modules.certificate.dto;
+package com.haritonov.school.docflow.modules.exemption.dto;
 
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDate;
 
 @Data
-public class CertificateFilterDto {
+public class ExemptionOrderFilterDto {
+
     private String documentNumber;
     private String studentName;
     private String creatorName;
-    private String className;
+
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateFrom;
+
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateTo;
 }

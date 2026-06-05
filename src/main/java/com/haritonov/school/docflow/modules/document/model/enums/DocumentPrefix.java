@@ -11,7 +11,8 @@ public enum DocumentPrefix {
     ENROLLMENT_MORE("Пр-Зач-Груп", "Приказ о зачислении (групповой)"),
     DISLOCATION("Пр-Пер", "Приказ о временном перемещении"),
     RELEASE("Пр-Отч", "Приказ об отчислении"),
-    CERTIFICATE("Спр-Осв", "Справка об освобождении");
+    CERTIFICATE("Спр-Обуч", "Справка об обучении"),
+    EXEMPTION_ORDER("Пр-Осв", "Приказ об освобождении");
 
     private final String code;
     private final String description;

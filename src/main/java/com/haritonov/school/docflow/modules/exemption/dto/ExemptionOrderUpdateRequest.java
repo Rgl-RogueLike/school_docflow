@@ -1,16 +1,16 @@
-package com.haritonov.school.docflow.modules.release.dto;
+package com.haritonov.school.docflow.modules.exemption.dto;
 
 import lombok.Data;
+
 import java.time.LocalDate;
 
 @Data
-public class ReleaseUpdateRequest {
+public class ExemptionOrderUpdateRequest {
     private Long id;
     private String documentNumber;
     private LocalDate documentDate;
-    private String basis;
-    private LocalDate basisDocumentDate;
+    private String purpose;
     private LocalDate dateFrom;
-    private LocalDate dateOn;
+    private LocalDate issueDate;
     private Long studentId;
 }

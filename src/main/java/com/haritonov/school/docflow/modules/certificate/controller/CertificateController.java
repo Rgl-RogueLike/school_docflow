@@ -1,17 +1,17 @@
 package com.haritonov.school.docflow.modules.certificate.controller;
 
-import com.haritonov.school.docflow.modules.certificate.dto.CertificateCreateRequest;
-import com.haritonov.school.docflow.modules.certificate.dto.CertificateFilterDto;
-import com.haritonov.school.docflow.modules.certificate.dto.CertificateResponse;
-import com.haritonov.school.docflow.modules.certificate.dto.CertificateUpdateRequest;
+import com.haritonov.school.docflow.modules.certificate.dto.*;
 import com.haritonov.school.docflow.modules.certificate.service.CertificateService;
 import com.haritonov.school.docflow.modules.document.model.enums.DocumentPrefix;
 import com.haritonov.school.docflow.modules.document.service.DocumentNumberGeneratedService;
-import com.haritonov.school.docflow.modules.employee.service.EmployeeService;
+import com.haritonov.school.docflow.modules.printdocuments.service.DocumentTemplateService;
 import com.haritonov.school.docflow.modules.student.service.StudentService;
 import com.haritonov.school.docflow.modules.user.service.CurrentUserService;
 import lombok.RequiredArgsConstructor;
-import org.jspecify.annotations.NonNull;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -26,9 +26,9 @@ public class CertificateController {
 
     private final CertificateService certificateService;
     private final StudentService studentService;
-    private final EmployeeService employeeService;
     private final CurrentUserService currentUserService;
     private final DocumentNumberGeneratedService documentNumberGeneratedService;
+    private final DocumentTemplateService documentTemplateService;
 
     @GetMapping
     public String listCertificates(@ModelAttribute CertificateFilterDto filter, Model model) {
@@ -49,16 +49,16 @@ public class CertificateController {
     public String showCreateForm(Model model) {
         CertificateCreateRequest request = new CertificateCreateRequest();
         request.setDocumentDate(LocalDate.now());
-        request.setIssueDate(LocalDate.now());
-        request.setDateFrom(LocalDate.now());
-        String generatedNumber = documentNumberGeneratedService.generatedNumber(
-                DocumentPrefix.CERTIFICATE,
+        // Предзаполним учебный год (текущий год - следующий год)
+        int year = LocalDate.now().getYear();
+        request.setAcademicYear(year + "-" + (year + 1));
+        String generatedNumber = documentNumberGeneratedService.generateNumberWithFullYear(
+                DocumentPrefix.CERTIFICATE, // нужно добавить префикс CERTIFICATE в DocumentPrefix
                 LocalDate.now()
         );
         request.setDocumentNumber(generatedNumber);
         model.addAttribute("certificateDto", request);
         model.addAttribute("students", studentService.getAll());
-        model.addAttribute("employees", employeeService.getAll());
         model.addAttribute("username", currentUserService.getCurrentEmployeeFullName());
         return "certificates/new";
     }
@@ -67,8 +67,9 @@ public class CertificateController {
     public String createCertificate(@ModelAttribute("certificateDto") CertificateCreateRequest request,
                                     RedirectAttributes redirectAttributes) {
         try {
+            request.setCreatorId(currentUserService.getCurrentEmployeeId());
             Long id = certificateService.create(request);
-            redirectAttributes.addFlashAttribute("success", "Справка успешно создана");
+            redirectAttributes.addFlashAttribute("success", "Справка об обучении успешно создана");
             return "redirect:/certificates/" + id;
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Ошибка создания справки: " + e.getMessage());
@@ -80,28 +81,20 @@ public class CertificateController {
     public String showEditForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
         try {
             CertificateResponse certificate = certificateService.getById(id);
-            CertificateUpdateRequest updateRequest = getCertificateUpdateRequest(certificate);
+            CertificateUpdateRequest updateRequest = new CertificateUpdateRequest();
+            updateRequest.setId(certificate.getId());
+            updateRequest.setDocumentNumber(certificate.getDocumentNumber());
+            updateRequest.setDocumentDate(certificate.getDocumentDate().toLocalDate());
+            updateRequest.setAcademicYear(certificate.getAcademicYear());
+            updateRequest.setStudentId(certificate.getStudentId());
             model.addAttribute("certificateDto", updateRequest);
             model.addAttribute("students", studentService.getAll());
-            model.addAttribute("employees", employeeService.getAll());
             model.addAttribute("username", currentUserService.getCurrentEmployeeFullName());
             return "certificates/edit";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Справка не найдена");
             return "redirect:/certificates";
         }
-    }
-
-    private static @NonNull CertificateUpdateRequest getCertificateUpdateRequest(CertificateResponse certificate) {
-        CertificateUpdateRequest updateRequest = new CertificateUpdateRequest();
-        updateRequest.setId(certificate.getId());
-        updateRequest.setDocumentNumber(certificate.getDocumentNumber());
-        updateRequest.setDocumentDate(certificate.getDocumentDate().toLocalDate());
-        updateRequest.setPurpose(certificate.getPurpose());
-        updateRequest.setDateFrom(certificate.getDateFrom());
-        updateRequest.setIssueDate(certificate.getIssueDate());
-        updateRequest.setStudentId(certificate.getStudentId());
-        return updateRequest;
     }
 
     @PostMapping("/{id}/edit")
@@ -127,5 +120,20 @@ public class CertificateController {
             redirectAttributes.addFlashAttribute("error", "Ошибка удаления: " + e.getMessage());
         }
         return "redirect:/certificates";
+    }
+
+    @GetMapping("/{id}/download")
+    public ResponseEntity<byte[]> downloadCertificate(@PathVariable Long id) {
+        try {
+            CertificateResponse certificate = certificateService.getById(id);
+            byte[] document = documentTemplateService.generateCertificate(certificate);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            headers.setContentDispositionFormData("attachment", "spravka_obuchenie_" + id + ".docx");
+            return new ResponseEntity<>(document, headers, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
     }
 }

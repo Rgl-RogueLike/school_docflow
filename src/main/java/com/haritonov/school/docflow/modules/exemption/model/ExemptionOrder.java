@@ -1,4 +1,4 @@
-package com.haritonov.school.docflow.modules.certificate.model;
+package com.haritonov.school.docflow.modules.exemption.model;
 
 import com.haritonov.school.docflow.model.base.Document;
 import com.haritonov.school.docflow.modules.student.model.Student;
@@ -13,8 +13,8 @@ import java.time.LocalDate;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "certificate_of_study")
-public class CertificateOfStudy extends Document {
+@Table(name = "order_of_exemption")
+public class ExemptionOrder extends Document {
 
     @Column(name = "issue_date")
     private LocalDate issueDate;

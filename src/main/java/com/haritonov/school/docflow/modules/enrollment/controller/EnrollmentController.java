@@ -7,9 +7,14 @@ import com.haritonov.school.docflow.modules.enrollment.dto.EnrollmentFilterDto;
 import com.haritonov.school.docflow.modules.enrollment.dto.EnrollmentResponse;
 import com.haritonov.school.docflow.modules.enrollment.dto.EnrollmentUpdateRequest;
 import com.haritonov.school.docflow.modules.enrollment.service.EnrollmentService;
+import com.haritonov.school.docflow.modules.printdocuments.service.DocumentTemplateService;
 import com.haritonov.school.docflow.modules.student.service.EducationalClassService;
 import com.haritonov.school.docflow.modules.user.service.CurrentUserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +31,7 @@ public class EnrollmentController {
     private final EducationalClassService classService;
     private final CurrentUserService currentUserService;
     private final DocumentNumberGeneratedService documentNumberGeneratedService;
+    private final DocumentTemplateService documentTemplateService;
 
     @GetMapping
     public String listEnrollments(@ModelAttribute EnrollmentFilterDto filter, Model model) {
@@ -123,5 +129,22 @@ public class EnrollmentController {
             redirectAttributes.addFlashAttribute("error", "Ошибка удаления: " + e.getMessage());
         }
         return "redirect:/enrollments";
+    }
+
+    @GetMapping("/{id}/download")
+    public ResponseEntity<byte[]> downloadEnrollment(@PathVariable Long id) {
+        try {
+            EnrollmentResponse enrollment = enrollmentService.getById(id);
+            byte[] document = documentTemplateService.generateEnrollmentOrder(enrollment);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            headers.setContentDispositionFormData("attachment", "prikaz_zachislenie_" + id + ".docx");
+
+            return new ResponseEntity<>(document, headers, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
     }
 }
